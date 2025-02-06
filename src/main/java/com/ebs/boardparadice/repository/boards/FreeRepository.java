@@ -1,6 +1,6 @@
 package com.ebs.boardparadice.repository.boards;
 
-import com.example.mergeex.model.Free;
+import com.ebs.boardparadice.model.Free;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

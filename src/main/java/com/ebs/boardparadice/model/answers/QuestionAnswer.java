@@ -1,7 +1,8 @@
 package com.ebs.boardparadice.model.answers;
 
-import com.example.mergeex.model.Gamer;
-import com.example.mergeex.model.Question;
+
+import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.Question;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
