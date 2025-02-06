@@ -28,7 +28,7 @@ public class NewsAnswer {
     @ManyToMany
     private Set<Gamer> voter;
 
-    @ManyToOne
+    @ManyToOne(optional = false, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "news_id")
     private News newsId;
 
