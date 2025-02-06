@@ -2,7 +2,7 @@ package com.ebs.boardparadice.model.answers;
 
 
 import com.ebs.boardparadice.model.Gamer;
-import com.ebs.boardparadice.model.Notice;
+import com.ebs.boardparadice.model.boards.Notice;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

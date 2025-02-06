@@ -1,5 +1,7 @@
-package com.ebs.boardparadice.model;
+package com.ebs.boardparadice.model.boards;
 
+import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.model.Gamer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +12,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-public class News {
+public class Free {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

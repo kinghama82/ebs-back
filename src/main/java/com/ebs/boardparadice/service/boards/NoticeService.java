@@ -1,6 +1,6 @@
 package com.ebs.boardparadice.service.boards;
 
-import com.ebs.boardparadice.model.Free;
+import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.repository.boards.FreeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
