@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface FreeAnswerRepository extends JpaRepository<FreeAnswer, Integer> {
-    Optional<FreeAnswer> findByFreeId(Integer freeId);
+
 }
