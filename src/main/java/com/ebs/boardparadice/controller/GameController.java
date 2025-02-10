@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/games")
@@ -26,85 +27,76 @@ public class GameController {
     private final GameService gameService;
     private final ObjectMapper objectMapper; // JSON 문자열을 DTO로 변환하기 위해
 
-    @Value("${file.upload-dir}")  // 설정 파일에서 값 읽기
-    private String uploadDir;
-
     /**
      * 게임 등록 (파일 업로드 지원)
      * multipart/form-data 형식으로, "game" 파트에는 JSON 문자열, "img" 파트에는 이미지 파일을 포함.
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<GameResponseDTO> createGame(
-            @RequestPart("game") String gameJson,
-            @RequestPart(value = "img", required = false) MultipartFile imgFile) {
+            @RequestPart("game") String gameJson,  // JSON 형식의 게임 데이터를 문자열로 받음
+            @RequestPart(value = "img", required = false) MultipartFile imgFile) { // 이미지 파일을 선택적으로 받음
 
         try {
+            // JSON 데이터를 GameRequestDTO 객체로 변환
             GameRequestDTO gameRequestDTO = objectMapper.readValue(gameJson, GameRequestDTO.class);
 
-            // 파일이 잘 전달되었는지 로그 확인
+            // 업로드된 파일이 존재하는지 확인 후 처리
             if (imgFile != null && !imgFile.isEmpty()) {
-                System.out.println("Received file: " + imgFile.getOriginalFilename());
-                String imageUrl = saveImageFile(imgFile);
-                gameRequestDTO.setImg(imageUrl);
+                System.out.println("📂 받은 파일: " + imgFile.getOriginalFilename()); // 파일명 출력
+                String imageUrl = saveImageFile(imgFile); // 파일 저장 후 URL 반환
+                gameRequestDTO.setImg(imageUrl); // DTO에 이미지 URL 설정
             } else {
-                System.out.println("No file received or file is empty");
+                System.out.println("⚠️ 파일이 없거나 비어 있음"); // 파일이 없을 경우 로그 출력
             }
 
+            // 게임 생성 서비스 호출
             GameResponseDTO createdGame = gameService.createGame(gameRequestDTO);
+
+            // 생성된 게임 정보를 HTTP 상태 201(CREATED)와 함께 반환
             return new ResponseEntity<>(createdGame, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
+
+            // 예외 발생 시 400(BAD_REQUEST) 응답 반환
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
 
     /**
      * 이미지 파일을 로컬에 저장하는 예시 메소드
      * 실제 운영환경에서는 파일명 중복, 경로 보안, 클라우드 스토리지 연동 등을 고려해야 합니다.
      */
     private String saveImageFile(MultipartFile imgFile) throws Exception {
-        String extension = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
-        String fileName = System.currentTimeMillis() + extension;
+        // ✅ 프로젝트 루트 경로 기준으로 static/uploads 폴더 설정
+        String projectDir = System.getProperty("user.dir");
+        Path uploadPath = Paths.get(projectDir, "src", "main", "resources", "static", "uploads");
 
-        Path uploadPath = Paths.get(uploadDir);
+        // ✅ uploads 폴더가 없으면 생성
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
-            System.out.println("✅ Upload directory created: " + uploadPath.toString());
+            System.out.println("✅ 업로드 디렉토리 생성됨: " + uploadPath.toString());
         }
 
-        Path filePath = uploadPath.resolve(fileName);
-        System.out.println("🟢 Attempting to save file at: " + filePath.toString());
+        // ✅ UUID를 사용하여 고유한 파일 이름 생성
+        String extension = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
+        String fileName = UUID.randomUUID().toString() + extension;
 
+        Path filePath = uploadPath.resolve(fileName);
+        System.out.println("🟢 파일 저장 시도 중: " + filePath.toString());
 
         try {
             Files.copy(imgFile.getInputStream(), filePath);
-            System.out.println("✅ File saved successfully: " + filePath.toString());
+            System.out.println("✅ 파일 저장 완료: " + filePath.toString());
         } catch (Exception e) {
-            System.err.println("🚨 Error saving file: " + e.getMessage());
+            System.err.println("🚨 파일 저장 오류: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
 
+        // ✅ 저장된 파일의 경로를 반환 (정적 리소스 경로로)
         return "/uploads/" + fileName;
     }
 
-
-
-   /* private String saveImageFile(MultipartFile imgFile) throws Exception {
-        String uploadDir = "uploads/";
-        String extension = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
-        String fileName = System.currentTimeMillis() + extension; // ✅ 파일명을 숫자로 변환하여 저장
-//        String fileName = System.currentTimeMillis() + "_" + imgFile.getOriginalFilename();
-
-        java.nio.file.Path uploadPath = java.nio.file.Paths.get(uploadDir);
-        if (!java.nio.file.Files.exists(uploadPath)) {
-            java.nio.file.Files.createDirectories(uploadPath);
-        }
-        java.nio.file.Path filePath = uploadPath.resolve(fileName);
-        java.nio.file.Files.copy(imgFile.getInputStream(), filePath);
-        return "/uploads/" + fileName; // 클라이언트가 접근 가능한 경로인지 확인
-    }*/
 
     /**
      * 전체 게임 목록 조회 (GET /games)

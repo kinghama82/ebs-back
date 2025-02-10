@@ -17,13 +17,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true); // 쿠키 포함 허용 (필요하면 추가)
     }
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:///D:/ebsproject/uploads/") ;// 절대경로 확인
-    }
-
-
-
-
 }
