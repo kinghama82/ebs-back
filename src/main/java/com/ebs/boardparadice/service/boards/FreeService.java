@@ -1,6 +1,7 @@
 package com.ebs.boardparadice.service.boards;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -58,10 +59,21 @@ public class FreeService {
    }
    
    //수정
+   public void modify(FreeDTO freeDTO) {
+	   Optional<Free> result = freeRepository.findById(freeDTO.getId());
+	   
+	   Free free = result.orElseThrow();
+	   
+	   free.setContent(freeDTO.getContent());
+	   free.setTitle(freeDTO.getTitle());
+	   
+	   
+	   freeRepository.save(free);
+   }
    
    //삭제
    public void delete(int id) {
-	   
+	   freeRepository.deleteById(id);
    }
 
 }
