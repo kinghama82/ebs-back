@@ -1,15 +1,16 @@
-package com.ebs.boardparadice.responseDTO;
+package com.ebs.boardparadice.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
+// GameRequestDTO.java
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GameResponseDTO {
+public class GameDTO {
     private int id;
     private String gameName;
     private String year;
@@ -18,11 +19,11 @@ public class GameResponseDTO {
     private String reage;
     private String company;
     private String sCompany;
-    private int price;
+    private Integer price;
     private String enGameName;
     private String bestPlayers;
-    private float avg;
-    private int gamerank;
+    private Float avg;
+    private Integer gamerank;
     private String img;
 
     // ✅ 이미지 URL이 null일 경우 기본값 설정

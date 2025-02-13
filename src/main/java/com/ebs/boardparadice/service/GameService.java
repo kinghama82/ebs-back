@@ -1,15 +1,16 @@
 package com.ebs.boardparadice.service;
 
-import com.ebs.boardparadice.model.Game;
-import com.ebs.boardparadice.repository.GameRepository;
-import com.ebs.boardparadice.requestDTO.GameRequestDTO;
-import com.ebs.boardparadice.responseDTO.GameResponseDTO;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ebs.boardparadice.DTO.GameDTO;
+import com.ebs.boardparadice.model.Game;
+import com.ebs.boardparadice.repository.GameRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -20,26 +21,26 @@ public class GameService {
     /**
      * 새로운 게임 등록
      */
-    public GameResponseDTO createGame(GameRequestDTO gameRequestDTO) {
+    public GameDTO createGame(GameDTO gameDTO) {
         Game game = new Game();
 
         // DTO에서 엔티티로 값 복사
-        game.setGameName(gameRequestDTO.getGameName());
-        game.setYear(gameRequestDTO.getYear());
-        game.setPlayers(gameRequestDTO.getPlayers());
-        game.setTime(gameRequestDTO.getTime());
-        game.setReage(gameRequestDTO.getReage());
-        game.setCompany(gameRequestDTO.getCompany());
-        game.setSCompany(gameRequestDTO.getSCompany());
-        game.setPrice(gameRequestDTO.getPrice());
-        game.setEnGameName(gameRequestDTO.getEnGameName());
-        game.setBestPlayers(gameRequestDTO.getBestPlayers());
-        game.setAvg(gameRequestDTO.getAvg());
-        game.setGamerank(gameRequestDTO.getGamerank());
+        game.setGameName(gameDTO.getGameName());
+        game.setYear(gameDTO.getYear());
+        game.setPlayers(gameDTO.getPlayers());
+        game.setTime(gameDTO.getTime());
+        game.setReage(gameDTO.getReage());
+        game.setCompany(gameDTO.getCompany());
+        game.setSCompany(gameDTO.getSCompany());
+        game.setPrice(gameDTO.getPrice());
+        game.setEnGameName(gameDTO.getEnGameName());
+        game.setBestPlayers(gameDTO.getBestPlayers());
+        game.setAvg(gameDTO.getAvg());
+        game.setGamerank(gameDTO.getGamerank());
 
         // ✅ img 필드가 null이 아니면 설정
-        if (gameRequestDTO.getImg() != null) {
-            game.setImg(gameRequestDTO.getImg());
+        if (gameDTO.getImg() != null) {
+            game.setImg(gameDTO.getImg());
         }
 
         Game savedGame = gameRepository.save(game);
@@ -49,7 +50,7 @@ public class GameService {
     /**
      * 전체 게임 목록 조회
      */
-    public List<GameResponseDTO> getAllGames() {
+    public List<GameDTO> getAllGames() {
         List<Game> games = gameRepository.findAll();
         return games.stream()
                 .map(this::convertToDTO)
@@ -59,7 +60,7 @@ public class GameService {
     /**
      * 특정 게임 조회 (ID 기준)
      */
-    public GameResponseDTO getGameById(int id) {
+    public GameDTO getGameById(int id) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
         return convertToDTO(game);
@@ -69,23 +70,23 @@ public class GameService {
      * 게임 정보 수정
      */
     @Transactional
-    public GameResponseDTO updateGame(int id, GameRequestDTO gameRequestDTO) {
+    public GameDTO updateGame(int id, GameDTO gameDTO) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
 
         // 필요한 필드 업데이트
-        game.setGameName(gameRequestDTO.getGameName());
-        game.setYear(gameRequestDTO.getYear());
-        game.setPlayers(gameRequestDTO.getPlayers());
-        game.setTime(gameRequestDTO.getTime());
-        game.setReage(gameRequestDTO.getReage());
-        game.setCompany(gameRequestDTO.getCompany());
-        game.setSCompany(gameRequestDTO.getSCompany());
-        game.setPrice(gameRequestDTO.getPrice());
-        game.setEnGameName(gameRequestDTO.getEnGameName());
-        game.setBestPlayers(gameRequestDTO.getBestPlayers());
-        game.setAvg(gameRequestDTO.getAvg());
-        game.setGamerank(gameRequestDTO.getGamerank());
+        game.setGameName(gameDTO.getGameName());
+        game.setYear(gameDTO.getYear());
+        game.setPlayers(gameDTO.getPlayers());
+        game.setTime(gameDTO.getTime());
+        game.setReage(gameDTO.getReage());
+        game.setCompany(gameDTO.getCompany());
+        game.setSCompany(gameDTO.getSCompany());
+        game.setPrice(gameDTO.getPrice());
+        game.setEnGameName(gameDTO.getEnGameName());
+        game.setBestPlayers(gameDTO.getBestPlayers());
+        game.setAvg(gameDTO.getAvg());
+        game.setGamerank(gameDTO.getGamerank());
 
         // @Transactional 어노테이션으로 인하여 별도의 save() 호출 없이 변경사항이 반영됨
         return convertToDTO(game);
@@ -103,8 +104,8 @@ public class GameService {
     /**
      * Game 엔티티를 GameResponseDTO로 변환
      */
-    private GameResponseDTO convertToDTO(Game game) {
-        return GameResponseDTO.builder()
+    private GameDTO convertToDTO(Game game) {
+        return GameDTO.builder()
                 .id(game.getId())
                 .gameName(game.getGameName())
                 .year(game.getYear())
