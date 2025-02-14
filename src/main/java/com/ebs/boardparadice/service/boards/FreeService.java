@@ -27,7 +27,7 @@ public class FreeService {
    private final ModelMapper modelMapper;
 
    //글 작성
-   public int create(FreeDTO freeDTO) {
+   public int createFree(FreeDTO freeDTO) {
 	   Free free = modelMapper.map(freeDTO, Free.class);
 	   
 	   Free saveFree = freeRepository.save(free);
@@ -59,7 +59,7 @@ public class FreeService {
    }
    
    //수정
-   public void modify(FreeDTO freeDTO) {
+   public void modifyFree(FreeDTO freeDTO) {
 	   Optional<Free> result = freeRepository.findById(freeDTO.getId());
 	   
 	   Free free = result.orElseThrow();
@@ -70,9 +70,16 @@ public class FreeService {
 	   
 	   freeRepository.save(free);
    }
+   public FreeDTO getFree(int id) {
+	   Optional<Free> result = freeRepository.findById(id);
+	   Free free = result.orElseThrow();
+	   
+	   FreeDTO dto = modelMapper.map(free, FreeDTO.class);
+	   return dto;
+   }
    
    //삭제
-   public void delete(int id) {
+   public void deleteFree(int id) {
 	   freeRepository.deleteById(id);
    }
 

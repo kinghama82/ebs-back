@@ -13,7 +13,7 @@ public class BoardTypeService {
 
     private final BoardTypeRepository boardTypeRepository;
 
-    public List<BoardType> findAll() {
+    public List<BoardType> getList() {
         return boardTypeRepository.findAll();
     }
 }
