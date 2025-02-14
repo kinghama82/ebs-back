@@ -51,7 +51,7 @@ public class RulebookService {
         return responseDTO;
     }
 
-    public Integer register(RulebookDTO rulebookDTO){
+    public Integer createRulebook(RulebookDTO rulebookDTO){
         Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
 
         Rulebook savedRulebook = rulebookRepository.save(rulebook);
@@ -59,7 +59,7 @@ public class RulebookService {
         return savedRulebook.getId();
     }
 
-    public RulebookDTO get(Integer id){
+    public RulebookDTO getRulebook(Integer id){
 
         Optional<Rulebook> result = rulebookRepository.findById(id);
 
@@ -70,7 +70,7 @@ public class RulebookService {
         return dto;
     }
 
-    public void modify(RulebookDTO rulebookDTO){
+    public void modifyRulebook(RulebookDTO rulebookDTO){
         Optional<Rulebook> result = rulebookRepository.findById(rulebookDTO.getId());
 
         Rulebook rulebook = result.orElseThrow();
@@ -81,7 +81,7 @@ public class RulebookService {
         rulebookRepository.save(rulebook);
     }
 
-    public void remove(Integer id){
+    public void deleteRulebook(Integer id){
         rulebookRepository.deleteById(id);
     }
 
