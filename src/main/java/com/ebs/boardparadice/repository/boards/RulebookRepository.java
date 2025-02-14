@@ -1,7 +1,8 @@
-package com.ebs.boardparadice.repository;
+package com.ebs.boardparadice.repository.boards;
 
-import com.ebs.boardparadice.model.Rulebook;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ebs.boardparadice.model.boards.Rulebook;
 
 public interface RulebookRepository extends JpaRepository<Rulebook, Integer> {
 

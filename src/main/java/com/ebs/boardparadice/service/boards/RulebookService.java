@@ -1,10 +1,11 @@
-package com.ebs.boardparadice.service;
+package com.ebs.boardparadice.service.boards;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
-import com.ebs.boardparadice.DTO.RulebookDTO;
-import com.ebs.boardparadice.model.Rulebook;
-import com.ebs.boardparadice.repository.RulebookRepository;
+import com.ebs.boardparadice.DTO.boards.RulebookDTO;
+import com.ebs.boardparadice.model.boards.Rulebook;
+import com.ebs.boardparadice.repository.boards.RulebookRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;

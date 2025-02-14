@@ -1,10 +1,11 @@
-package com.ebs.boardparadice.controller;
+package com.ebs.boardparadice.controller.boards;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
-import com.ebs.boardparadice.DTO.RulebookDTO;
 import com.ebs.boardparadice.DTO.boards.NewsDTO;
-import com.ebs.boardparadice.service.RulebookService;
+import com.ebs.boardparadice.DTO.boards.RulebookDTO;
+import com.ebs.boardparadice.service.boards.RulebookService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

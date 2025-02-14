@@ -1,4 +1,4 @@
-package com.ebs.boardparadice.DTO;
+package com.ebs.boardparadice.DTO.boards;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

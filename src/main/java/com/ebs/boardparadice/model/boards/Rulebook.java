@@ -1,11 +1,21 @@
-package com.ebs.boardparadice.model;
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+package com.ebs.boardparadice.model.boards;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.model.Gamer;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter

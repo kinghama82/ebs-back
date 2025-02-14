@@ -1,9 +1,10 @@
 package com.ebs.boardparadice;
 
-import com.ebs.boardparadice.repository.RulebookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import com.ebs.boardparadice.repository.boards.RulebookRepository;
 
 @SpringBootTest
 class BoardparadiceApplicationTests {

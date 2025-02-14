@@ -1,4 +1,4 @@
-package com.ebs.boardparadice.service;
+package com.ebs.boardparadice.service.boards;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ebs.boardparadice.DTO.GameDTO;
-import com.ebs.boardparadice.model.Game;
-import com.ebs.boardparadice.repository.GameRepository;
+import com.ebs.boardparadice.DTO.boards.GameDTO;
+import com.ebs.boardparadice.model.boards.Game;
+import com.ebs.boardparadice.repository.boards.GameRepository;
 
 import lombok.RequiredArgsConstructor;
 
