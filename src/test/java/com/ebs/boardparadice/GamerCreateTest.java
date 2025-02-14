@@ -29,11 +29,10 @@ public class GamerCreateTest {
         gamer.setNickname("베리아빠");
         gamer.setPhone("01039039107");
         gamer.setAddress("유현로33번길 73 405동 1203호");
-        gamer.setRole("ADMIN");
+        gamer.setRole("GamerRole.ADMIN");
         gamer.setCreatedate(LocalDateTime.now());
         gamer.setLevel("100");
-        
-        gamerRepository.save(gamer);
 
+        gamerRepository.save(gamer);
     }
 }
