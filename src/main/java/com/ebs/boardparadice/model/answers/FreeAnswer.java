@@ -22,7 +22,7 @@ public class FreeAnswer {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(optional = false, cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "writer_id")
     private Gamer writerId;
 

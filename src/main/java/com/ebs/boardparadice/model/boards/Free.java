@@ -2,11 +2,14 @@ package com.ebs.boardparadice.model.boards;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.answers.FreeAnswer;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,8 +27,8 @@ public class Free {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "writer_id")
+    @ManyToOne
+    @JoinColumn(name = "writer_id", nullable = false)
     private Gamer writerId;
 
     @ManyToMany
@@ -34,7 +37,10 @@ public class Free {
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDate createdate;
 
-    @ManyToOne(optional = false)
+    @OneToMany(mappedBy = "freeId", cascade = CascadeType.REMOVE)
+    private List<FreeAnswer> answerList;
+    
+    @ManyToOne
     @JoinColumn(name = "type_id")
     private BoardType typeId;
 
