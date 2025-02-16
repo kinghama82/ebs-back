@@ -34,7 +34,7 @@ public class FreeController {
 	}
 	
 	//목록
-	@GetMapping("/list")
+	@GetMapping("/")
 	public PageResponseDTO<FreeDTO> list(PageRequestDTO pageRequestDTO){
 		log.info("list객체확인 : " + pageRequestDTO);
 		return freeService.getList(pageRequestDTO);
