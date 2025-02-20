@@ -1,4 +1,4 @@
-package com.ebs.boardparadice.model;
+package com.ebs.boardparadice.model.boards;
 
 
 import jakarta.persistence.*;

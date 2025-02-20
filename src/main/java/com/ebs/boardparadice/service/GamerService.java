@@ -1,6 +1,6 @@
 package com.ebs.boardparadice.service;
 
-import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.boards.Gamer;
 import com.ebs.boardparadice.repository.GamerRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;

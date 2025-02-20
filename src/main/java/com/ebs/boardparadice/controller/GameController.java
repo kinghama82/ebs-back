@@ -74,19 +74,21 @@ public class GameController {
      * 실제 운영환경에서는 파일명 중복, 경로 보안, 클라우드 스토리지 연동 등을 고려해야 합니다.
      */
     private String saveImageFile(MultipartFile imgFile) throws Exception {
-        // ✅ 프로젝트 루트 경로 기준으로 static/uploads 폴더 설정
+        // ✅ 프로젝트 루트 경로 기준으로 static/uploads/games 폴더 설정
         String projectDir = System.getProperty("user.dir");
-        Path uploadPath = Paths.get(projectDir, "src", "main", "resources", "static", "uploads");
+        Path uploadPath = Paths.get(projectDir, "src", "main", "resources", "static", "uploads", "games");
 
-        // ✅ uploads 폴더가 없으면 생성
+        // ✅ uploads/games 폴더가 없으면 생성
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
             System.out.println("✅ 업로드 디렉토리 생성됨: " + uploadPath.toString());
         }
 
-        // ✅ UUID를 사용하여 고유한 파일 이름 생성
-        String extension = imgFile.getOriginalFilename().substring(imgFile.getOriginalFilename().lastIndexOf("."));
-        String fileName = UUID.randomUUID().toString() + extension;
+        // ✅ 원본 파일명에서 확장자 포함한 전체 이름 가져오기
+        String originalFileName = imgFile.getOriginalFilename();
+
+        // ✅ UUID + 원본 파일명 조합하여 저장 (공백 제거)
+        String fileName = UUID.randomUUID().toString() + "_" + originalFileName.replaceAll("\\s+", "");
 
         Path filePath = uploadPath.resolve(fileName);
         System.out.println("🟢 파일 저장 시도 중: " + filePath.toString());
@@ -100,10 +102,9 @@ public class GameController {
             throw e;
         }
 
-        // ✅ 저장된 파일의 경로를 반환 (정적 리소스 경로로)
-        return "/uploads/" + fileName;
+        // ✅ 저장된 파일의 경로를 반환 (웹에서 접근할 수 있도록 상대 경로 사용)
+        return "/uploads/games/" + fileName;
     }
-
 
     /**
      * 전체 게임 목록 조회 (GET /games)
