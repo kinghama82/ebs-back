@@ -1,6 +1,6 @@
 package com.ebs.boardparadice;
 
-import com.ebs.boardparadice.model.boards.Gamer;
+import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.repository.GamerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

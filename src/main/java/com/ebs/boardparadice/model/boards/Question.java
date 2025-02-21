@@ -1,6 +1,7 @@
 package com.ebs.boardparadice.model.boards;
 
 import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.model.Gamer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

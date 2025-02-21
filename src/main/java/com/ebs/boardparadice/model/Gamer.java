@@ -1,15 +1,19 @@
-package com.ebs.boardparadice.model.boards;
+package com.ebs.boardparadice.model;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Gamer {
 
     @Id
@@ -34,17 +38,40 @@ public class Gamer {
     @Column(nullable = false, unique = true, length = 20)
     private String phone;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String address;
 
-    @Column(nullable = false, length = 10)
-    private String role;
+    private boolean social;
 
     @Column(nullable = false)
     private LocalDateTime createdate;
 
     @Column(nullable = false, length = 20)
     private String level;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<MemberRole> memberRoleList = new ArrayList<>();
+
+    public void addRole(MemberRole memberRole) {
+        memberRoleList.add(memberRole);
+    }
+
+    public void clearRole(){
+        memberRoleList.clear();
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void changeSocial(boolean social) {
+        this.social = social;
+    }
 
     @PrePersist
     public void prePersist() {

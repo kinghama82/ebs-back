@@ -37,6 +37,9 @@ public class Game {
     @Column(name = "price")
     private int price;
 
+    @Column(name = "weight")
+    private float weight;
+
     @Column(name = "engamename", length = 100)
     private String enGameName;
 

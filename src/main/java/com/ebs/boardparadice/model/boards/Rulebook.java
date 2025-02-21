@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.ebs.boardparadice.model.BoardType;
 
+import com.ebs.boardparadice.model.Gamer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

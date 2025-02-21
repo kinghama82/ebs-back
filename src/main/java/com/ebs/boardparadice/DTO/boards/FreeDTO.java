@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import com.ebs.boardparadice.model.BoardType;
-import com.ebs.boardparadice.model.boards.Gamer;
+import com.ebs.boardparadice.model.Gamer;
 
 import lombok.Data;
 import lombok.Getter;
