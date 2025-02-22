@@ -1,5 +1,6 @@
 package com.ebs.boardparadice.security;
 
+import com.ebs.boardparadice.util.JWTUtil;
 import com.google.gson.Gson;
 import com.springboot.biz.dto.MemberDTO;
 import com.springboot.biz.util.JWTUtil;
