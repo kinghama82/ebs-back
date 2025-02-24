@@ -1,4 +1,4 @@
-package com.ebs.boardparadice.controller;
+package com.ebs.boardparadice.controller.boards;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

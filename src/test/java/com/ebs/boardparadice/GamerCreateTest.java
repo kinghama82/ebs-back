@@ -1,6 +1,7 @@
 package com.ebs.boardparadice;
 
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.GamerRole;
 import com.ebs.boardparadice.repository.GamerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,9 @@ public class GamerCreateTest {
         gamer.setNickname("베리아빠");
         gamer.setPhone("01039039107");
         gamer.setAddress("유현로33번길 73 405동 1203호");
-        gamer.setRole("GamerRole.ADMIN");
+//        gamer.setRole("GamerRole.ADMIN");
+        gamer.setSocial(false);
+        gamer.addRole(GamerRole.USER);
         gamer.setCreatedate(LocalDateTime.now());
         gamer.setLevel("100");
 

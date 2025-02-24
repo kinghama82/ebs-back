@@ -51,14 +51,14 @@ public class Gamer {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
-    private List<MemberRole> memberRoleList = new ArrayList<>();
+    private List<GamerRole> gamerRoleList = new ArrayList<>();
 
-    public void addRole(MemberRole memberRole) {
-        memberRoleList.add(memberRole);
+    public void addRole(GamerRole gamerRole) {
+        gamerRoleList.add(gamerRole);
     }
 
     public void clearRole(){
-        memberRoleList.clear();
+        gamerRoleList.clear();
     }
 
     public void changeNickname(String nickname) {

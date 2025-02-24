@@ -32,7 +32,7 @@ public class JhkTest {
 			  
 			  dto.setContent("테스트 내용 : " + i); 
 			  dto.setTitle("테스트 제목 : " + i);
-			  dto.setWriterId(gamerService.findById(1));
+			  dto.setWriterId(gamerService.getGamerById(1));
 			  dto.setCreatedate(LocalDate.now());
 			  
 			 freeService.createFree(dto);

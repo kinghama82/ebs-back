@@ -11,10 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface GamerRepository extends JpaRepository<Gamer, Integer> {
+
     Optional<Gamer> findByEmail(String email);
 
-    @EntityGraph(attributePaths = "memberRoleList")
-    @Query("select m from Gamer m where m.email = :email")
-    Gamer getWithRoles(@Param("email") String email);
-
+    @EntityGraph(attributePaths = "gamerRoleList", type = EntityGraph.EntityGraphType.LOAD)
+    @Query("select g from Gamer g where g.email = :email")
+    Optional<Gamer> getWithRoles(@Param("email") String email);
 }
+

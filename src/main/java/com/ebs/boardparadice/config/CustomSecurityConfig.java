@@ -1,5 +1,7 @@
 package com.ebs.boardparadice.config;
 
+import com.ebs.boardparadice.security.APILoginFailHandler;
+import com.ebs.boardparadice.security.APILoginSuccessHandler;
 import com.ebs.boardparadice.security.filter.JWTCheckFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,7 +33,11 @@ public class CustomSecurityConfig {
         http.csrf(csrf -> csrf.disable());
 
         // 로그인 엔드포인트 (예: /api/auth/login)는 JWTCheckFilter 검증 제외 처리
-        http.formLogin(form -> form.loginPage("/api/auth/login"));
+        http.formLogin(form -> {
+            form.loginPage("/api/gamer/login");
+            form.successHandler(new APILoginSuccessHandler());
+            form.failureHandler(new APILoginFailHandler());
+        });
 
         // JWTCheckFilter를 UsernamePasswordAuthenticationFilter 전에 실행
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -43,7 +49,7 @@ public class CustomSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
 
@@ -51,6 +57,8 @@ public class CustomSecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

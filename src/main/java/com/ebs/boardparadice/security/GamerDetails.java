@@ -17,7 +17,7 @@ public class GamerDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return gamer.getMemberRoleList().stream()
+        return gamer.getGamerRoleList().stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }

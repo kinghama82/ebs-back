@@ -2,6 +2,7 @@ package com.ebs.boardparadice;
 
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.model.GamerRole;
 import com.ebs.boardparadice.model.boards.Rulebook;
 import com.ebs.boardparadice.repository.GamerRepository;
 import com.ebs.boardparadice.repository.BoardTypeRepository;
@@ -38,7 +39,9 @@ public class WtyTest {
             gamer.setNickname("nickname" + i);
             gamer.setPhone("010-1234-567" + i);
             gamer.setAddress("Address " + i);
-            gamer.setRole("USER");
+//            gamer.setRole("USER");
+            gamer.setSocial(false);
+            gamer.addRole(GamerRole.USER);
             gamer.setCreatedate(LocalDateTime.now());
             gamer.setLevel("10");
 
