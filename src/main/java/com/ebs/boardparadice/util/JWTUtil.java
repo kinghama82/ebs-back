@@ -1,18 +1,14 @@
 package com.ebs.boardparadice.util;
 
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.log4j.Log4j2;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
-
-import javax.crypto.SecretKey;
-
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.InvalidClaimException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.Keys;
-import lombok.extern.log4j.Log4j2;
 
 
 @Log4j2
@@ -22,30 +18,30 @@ public class JWTUtil {
 
     public static String generateToken(Map<String , Object> valueMap, int minute) {
 
-        SecretKey key = null;
+        SecretKey key;
 
         try {
 //            HMAC 알고리즘을 적용한 KEY 생성
-            key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes("UTF-8"));
+            key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
 
-        String jwtstr = Jwts.builder()
+        // 토큰에 저장할 데이터
+        return Jwts.builder()
                 .setHeader(Map.of("typ", "JWT"))
                 .setClaims(valueMap)   // 토큰에 저장할 데이터
                 .setIssuedAt(Date.from(ZonedDateTime.now().plusMinutes(minute).toInstant()))
                 .signWith(key)
                 .compact();
-        return jwtstr;
     }
     //    토큰 검증을 위한 메소드
     public static Map<String, Object> validateToken(String token) {
 
-        Map<String, Object> claims = null;
+        Map<String, Object> claims ;
 
         try {
-            SecretKey key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes("UTF-8"));
+            SecretKey key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes(StandardCharsets.UTF_8));
 
             claims = Jwts.parserBuilder()
                     .setSigningKey(key)

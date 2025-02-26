@@ -1,5 +1,6 @@
 package com.ebs.boardparadice.DTO;
 
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -33,7 +34,10 @@ public class GamerDTO extends User {
     private List<String> roleNames = new ArrayList<>();
 
     public GamerDTO(int id, String name, int age, String email, String password, String nickname, String phone, String address, boolean social, LocalDateTime createdate, String level, List<String> roleNames) {
-        super(email, password, roleNames.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList()));
+        super(email, password,
+                (roleNames != null ? roleNames : new ArrayList<>())
+                        .stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList()));
         this.id = id;
         this.name = name;
         this.age = age;
@@ -45,8 +49,9 @@ public class GamerDTO extends User {
         this.social = social;
         this.createdate = createdate;
         this.level = level;
-        this.roleNames = roleNames;
+        this.roleNames = roleNames != null ? roleNames : new ArrayList<>();
     }
+
 
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();

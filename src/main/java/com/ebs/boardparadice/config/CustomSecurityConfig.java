@@ -32,7 +32,13 @@ public class CustomSecurityConfig {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.csrf(csrf -> csrf.disable());
 
-        // 로그인 엔드포인트 (예: /api/auth/login)는 JWTCheckFilter 검증 제외 처리
+/*        // 인증이 필요 없는 엔드포인트 설정
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/gamer/**", "/error").permitAll() // 회원가입, 로그인 API는 인증 필요 없음
+                .anyRequest().authenticated() // 그 외의 모든 요청은 인증 필요
+        );*/
+
+        // 로그인 엔드포인트 (예: /api/gamer/login)는 JWTCheckFilter 검증 제외 처리
         http.formLogin(form -> {
             form.loginPage("/api/gamer/login");
             form.successHandler(new APILoginSuccessHandler());
@@ -49,6 +55,7 @@ public class CustomSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);

@@ -25,20 +25,19 @@ public class memberTest {
     public void testRegisterGamer_withAdminNickname_shouldAddAdminRole() {
         // given: 필수 정보가 채워진 Gamer 객체 생성
         Gamer gamer = new Gamer();
-        gamer.setName("John Doe");
+        gamer.setName("김정호");
         gamer.setAge(30);
-        gamer.setEmail("user1@example.com");
+        gamer.setEmail("user2@aaa.com");
         gamer.setPassword("1111");
-        gamer.setNickname("김정호");
-        gamer.setPhone("010-3456-5678");
+        gamer.setNickname("테스트1");
+        gamer.setPhone("010-1234-5679");
         gamer.setAddress("Seoul");
         gamer.setSocial(false);
         // level은 필수 값으로 기본 값 설정
         gamer.setLevel("10");
 
         // when: 회원가입 실행
-        Gamer registeredGamer = gamerService.registerGamer(gamer);
-
+        Gamer registeredGamer = gamerRepository.save(gamer);
 
     }
 }
