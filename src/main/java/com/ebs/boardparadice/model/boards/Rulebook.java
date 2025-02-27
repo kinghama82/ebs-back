@@ -6,11 +6,13 @@ import java.util.Set;
 import com.ebs.boardparadice.model.BoardType;
 
 import com.ebs.boardparadice.model.Gamer;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
@@ -32,7 +34,8 @@ public class Rulebook {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name="writer_id")
     private Gamer writerId;
 
     @ManyToMany
@@ -40,7 +43,8 @@ public class Rulebook {
 
     private LocalDateTime createdate;
 
-//    private game gameid
+    @Column(length = 255)
+    private String imageUrl;
 
     @ManyToOne
     private BoardType type;

@@ -23,6 +23,6 @@ public class RulebookDTO {
     private Set<Gamer> voter;
     private LocalDateTime createdate;
     private BoardType type;
-
+    private String imageUrl;
 
 }
