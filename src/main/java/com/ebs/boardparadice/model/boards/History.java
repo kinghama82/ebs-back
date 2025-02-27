@@ -1,8 +1,10 @@
 package com.ebs.boardparadice.model.boards;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.model.Gamer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,7 +23,7 @@ public class History {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
-	private int id;
+	private Integer id;
 	
 	private int win;
 	private int draw;
@@ -34,6 +36,12 @@ public class History {
 	
 	@Column(nullable = false)
 	private String title;
+	
+	@ManyToOne
+	@JoinColumn(nullable = false, name = "gamer_id")
+	private Gamer gamer;
+	
+	private List<String> mate;
 	
 	@ManyToOne
 	@JoinColumn(nullable = false, name = "game_id")

@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
-@RequestMapping("/free")
+@RequestMapping("/api/free")
 @RequiredArgsConstructor
 @Log4j2
 public class FreeController {
@@ -59,8 +59,6 @@ public class FreeController {
 	@PostMapping("/")
 	public Map<String, String> create(@RequestBody FreeDTO freeDTO){
 		int id = freeService.createFree(freeDTO);
-		return Map.of("result", "등록 성공");
-		
-		
+		return Map.of("result", "등록 성공");		
 	}
 }

@@ -119,7 +119,7 @@ public class GameController {
      * 특정 게임 조회 (GET /games/{id})
      */
     @GetMapping("/{id}")
-    public ResponseEntity<GameDTO> getGameById(@PathVariable int id) {
+    public ResponseEntity<GameDTO> getGameById(@PathVariable(name = "id") int id) {
         GameDTO game = gameService.getGameById(id);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
