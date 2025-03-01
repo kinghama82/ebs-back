@@ -3,6 +3,8 @@ package com.ebs.boardparadice.service.boards;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ebs.boardparadice.DTO.boards.GameCategoryDTO;
+import com.ebs.boardparadice.model.boards.GameCategory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +64,7 @@ public class GameService {
      */
     public GameDTO getGameById(int id) {
         Game game = gameRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("게임을 찾을수 없습니다 id: " + id));
         return convertToDTO(game);
     }
 
@@ -72,7 +74,7 @@ public class GameService {
     @Transactional
     public GameDTO updateGame(int id, GameDTO gameDTO) {
         Game game = gameRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("게임을 찾을수 없습니다 id: " + id));
 
         // 필요한 필드 업데이트
         game.setGameName(gameDTO.getGameName());
@@ -119,7 +121,22 @@ public class GameService {
                 .bestPlayers(game.getBestPlayers())
                 .avg(game.getAvg())
                 .gamerank(game.getGamerank())
-                .img((game.getImg() != null) ? game.getImg() : "") // ✅ 이미지가 null이면 빈 값 반환
+                .img((game.getImg() != null) ? game.getImg() : "")
+                .gameCategory(game.getGameCategory().stream()
+                        .map(category -> GameCategoryDTO.builder()
+                                .id(category.getId())
+                                .gameCategory(category.getGameCategory()) // 카테고리 이름
+                                .description(category.getDescription())
+                                .build())
+                        .collect(Collectors.toSet()))
                 .build();
+    }
+
+
+    public void addCategory(int gameId, GameCategory category) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new RuntimeException("게임을 찾을수 없습니다 id: " + gameId));
+        game.getGameCategory().add(category);
+        gameRepository.save(game);
     }
 }

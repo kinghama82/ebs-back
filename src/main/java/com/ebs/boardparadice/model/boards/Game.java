@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -53,5 +57,14 @@ public class Game {
 
     @Column(name = "gamerank")
     private int gamerank;
+
+    @ManyToMany
+    @JoinTable(
+            name = "game_category_mapping", // 중간 테이블 이름
+            joinColumns = @JoinColumn(name = "game_id"), // Game 엔티티의 외래 키
+            inverseJoinColumns = @JoinColumn(name = "category_id") // GameCategory 엔티티의 외래 키
+    )
+    // 컬렉션 초기화를 통해 NullPointerException 방지
+    private Set<GameCategory> gameCategory = new HashSet<>();
 
 }

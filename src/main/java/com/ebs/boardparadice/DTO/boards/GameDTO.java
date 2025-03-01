@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 // GameRequestDTO.java
 @Data
 @Builder
@@ -25,6 +27,7 @@ public class GameDTO {
     private Float avg;
     private Integer gamerank;
     private String img;
+    private Set<GameCategoryDTO> gameCategory;
 
     // ✅ 이미지 URL이 null일 경우 기본값 설정
     public String getImg() {
