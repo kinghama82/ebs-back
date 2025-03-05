@@ -3,11 +3,12 @@ package com.ebs.boardparadice.security;
 import com.ebs.boardparadice.DTO.GamerDTO;
 import com.ebs.boardparadice.util.JWTUtil;
 import com.google.gson.Gson;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -26,18 +27,35 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
 
         GamerDTO gamerDTO = (GamerDTO) authentication.getPrincipal();
 
-        // 먼저 claims 수정: LocalDateTime -> 문자열
+        // ✅ JWT 생성
         Map<String, Object> claims = gamerDTO.getClaims();
-        // 기존: claims.put("createdate", gamerDTO.getCreatedate().toString());
-        // 수정:
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         claims.put("createdate", gamerDTO.getCreatedate().format(formatter));
 
-        // 이제 토큰 생성
         String accessToken = JWTUtil.generateToken(claims, 10);
         String refreshToken = JWTUtil.generateToken(claims, 60 * 24);
 
-        // 토큰 정보를 claims에 추가 (원하는 경우)
+        // ✅ `Set-Cookie`로 쿠키 저장 (ResponseCookie 사용)
+        ResponseCookie accessTokenCookie = ResponseCookie.from("accessToken", accessToken)
+                .httpOnly(false)  // ✅ 클라이언트에서도 접근 가능
+                .secure(false)    // ✅ 개발 환경에서는 false, 배포 환경에서는 true
+                .sameSite("None") // ✅ CORS 허용을 위해 None 설정
+                .path("/")
+                .maxAge(10 * 60)  // ✅ 10분 유효
+                .build();
+
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(false)
+                .secure(false)
+                .sameSite("None")
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // ✅ 7일 유효
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        // ✅ JSON 응답도 유지 (프론트에서 토큰을 사용할 수 있도록)
         claims.put("accessToken", accessToken);
         claims.put("refreshToken", refreshToken);
 
@@ -50,14 +68,7 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         printWriter.print(jsonStr);
         printWriter.close();
     }
-
 }
-
-
-
-
-
-
 
 
 

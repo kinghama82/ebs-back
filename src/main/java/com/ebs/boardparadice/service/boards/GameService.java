@@ -23,6 +23,7 @@ public class GameService {
     /**
      * 새로운 게임 등록
      */
+    @Transactional
     public GameDTO createGame(GameDTO gameDTO) {
         Game game = new Game();
 
@@ -52,16 +53,27 @@ public class GameService {
     /**
      * 전체 게임 목록 조회
      */
+/*    @Transactional   //lazy문제 해결을 위한 어노테이션
     public List<GameDTO> getAllGames() {
         List<Game> games = gameRepository.findAll();
         return games.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }*/
+
+    @Transactional
+    public List<GameDTO> getAllGames() {
+        List<Game> games = gameRepository.findAll();  // @EntityGraph 덕분에 JOIN이 수행됨
+        return games.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
+
 
     /**
      * 특정 게임 조회 (ID 기준)
      */
+    @Transactional
     public GameDTO getGameById(int id) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게임을 찾을수 없습니다 id: " + id));
@@ -97,6 +109,7 @@ public class GameService {
     /**
      * 게임 삭제
      */
+    @Transactional
     public void deleteGame(int id) {
         Game game = gameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
@@ -106,6 +119,7 @@ public class GameService {
     /**
      * Game 엔티티를 GameResponseDTO로 변환
      */
+
     private GameDTO convertToDTO(Game game) {
         return GameDTO.builder()
                 .id(game.getId())
@@ -132,7 +146,7 @@ public class GameService {
                 .build();
     }
 
-
+    @Transactional
     public void addCategory(int gameId, GameCategory category) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new RuntimeException("게임을 찾을수 없습니다 id: " + gameId));

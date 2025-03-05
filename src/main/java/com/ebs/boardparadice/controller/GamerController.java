@@ -3,9 +3,12 @@ package com.ebs.boardparadice.controller;
 import com.ebs.boardparadice.DTO.GamerDTO;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.service.GamerService;
+import com.ebs.boardparadice.util.CustomJWTException;
+import com.ebs.boardparadice.util.JWTUtil;
 import com.ebs.boardparadice.validation.GamerCreateForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/gamer")
 @RequiredArgsConstructor
+@Log4j2
 public class GamerController {
 
     private final GamerService gamerService;
@@ -91,4 +95,38 @@ public class GamerController {
         }
     }
 
+    @PostMapping("/refreshToken")
+    public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> requestBody) {
+        String refreshToken = requestBody.get("refreshToken");
+
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Refresh token이 필요합니다."));
+        }
+
+        try {
+            Map<String, Object> claims = JWTUtil.validateToken(refreshToken);
+            String email = (String) claims.get("email");
+
+            String newAccessToken = JWTUtil.generateToken(Map.of(
+                    "email", email,
+                    "roleNames", claims.get("roleNames")
+            ), 10);
+
+            return ResponseEntity.ok(Map.of(
+                    "accessToken", newAccessToken,
+                    "refreshToken", refreshToken
+            ));
+        } catch (CustomJWTException e) {
+            log.error("Refresh Token 검증 실패: " + e.getMessage());
+            return ResponseEntity.status(401).body(Map.of("error", "유효하지 않은 Refresh Token"));
+        }
+    }
+
+
 }
+
+
+
+
+
+
