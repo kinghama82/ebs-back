@@ -9,15 +9,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ebs.boardparadice.DTO.boards.GameDTO;
@@ -141,5 +133,13 @@ public class GameController {
     public ResponseEntity<Void> deleteGame(@PathVariable int id) {
         gameService.deleteGame(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    /**
+     * 게임 검색 API (GET /api/games/search?keyword=검색어)
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<GameDTO>> searchGames(@RequestParam String keyword) {
+        List<GameDTO> games = gameService.searchGames(keyword);
+        return new ResponseEntity<>(games, HttpStatus.OK);
     }
 }

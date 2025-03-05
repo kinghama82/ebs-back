@@ -153,4 +153,15 @@ public class GameService {
         game.getGameCategory().add(category);
         gameRepository.save(game);
     }
+
+    @Transactional
+    public List<GameDTO> searchGames(String keyword) {
+        List<Game> games = gameRepository.findByGameNameContainingOrCompanyContainingOrEnGameNameContaining(
+                keyword, keyword, keyword
+        );
+        return games.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 }
