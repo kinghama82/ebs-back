@@ -19,7 +19,7 @@ public class RulebookDTO {
     private int id;
     private String title;
     private String content;
-    private String writer_id;
+    private Gamer writerId;
     private Set<Gamer> voter;
     private LocalDateTime createdate;
     private BoardType type;
