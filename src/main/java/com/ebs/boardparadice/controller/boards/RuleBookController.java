@@ -70,8 +70,14 @@ public class RuleBookController {
     }
 
     @GetMapping("/{id}")
-    public RulebookDTO get(@PathVariable(name = "id") Integer id) {
-        return rulebookService.getRulebook(id);
+    public ResponseEntity<RulebookDTO> get(@PathVariable(name = "id") Integer id) {
+        // 게시글을 조회하면서 조회수를 증가시킴
+        RulebookDTO rulebookDTO = rulebookService.getRulebook(id);
+    
+        // 조회수 증가 후, 게시글을 저장하는 로직을 서비스에서 처리
+        rulebookService.incrementViewCount(id);
+    
+        return ResponseEntity.ok(rulebookDTO);  // 조회수 증가 후, 게시글 반환
     }
 
     @PostMapping("/create")
@@ -108,4 +114,10 @@ public class RuleBookController {
         return Map.of("결과", "성공");
     }
 
+     // 조회수 증가
+     @PostMapping("/{id}/view")
+     public ResponseEntity<String> incrementViewCount(@PathVariable Integer id) {
+         rulebookService.incrementViewCount(id);
+         return ResponseEntity.ok("View count incremented");
+     }
 }

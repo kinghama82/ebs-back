@@ -2,6 +2,8 @@ package com.ebs.boardparadice.DTO.boards;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +27,6 @@ public class RulebookDTO {
     private BoardType type;
     private String imageUrl;
 
+    @Column(name = "view_count")  // 데이터베이스 컬럼명과 일치시킴
+    private int viewCount;
 }

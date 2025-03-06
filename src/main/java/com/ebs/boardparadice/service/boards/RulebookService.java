@@ -3,26 +3,21 @@ package com.ebs.boardparadice.service.boards;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.RulebookDTO;
-import com.ebs.boardparadice.model.Gamer;
+
 import com.ebs.boardparadice.model.boards.Rulebook;
-import com.ebs.boardparadice.repository.GamerRepository;
+
 import com.ebs.boardparadice.repository.boards.RulebookRepository;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,10 +29,7 @@ public class RulebookService {
     private final RulebookRepository rulebookRepository;
     private final ModelMapper modelMapper;
 
-
-    
-   
-
+    //리스트
     public PageResponseDTO<RulebookDTO> getList(PageRequestDTO pageRequestDTO){
 
         Pageable pageable = PageRequest.of(
@@ -64,6 +56,7 @@ public class RulebookService {
     }
 
     
+    //작성
     public Integer createRulebook(RulebookDTO rulebookDTO){
         Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
 
@@ -81,17 +74,18 @@ public class RulebookService {
         return savedRulebook.getId();
     }
 
-    public RulebookDTO getRulebook(Integer id){
-
+    //상세보기
+    public RulebookDTO getRulebook(Integer id) {
+        // 게시글 조회
         Optional<Rulebook> result = rulebookRepository.findById(id);
-
-        Rulebook rulebook = result.get();
-
-        RulebookDTO dto = modelMapper.map(rulebook, RulebookDTO.class);
-
-        return dto;
+        Rulebook rulebook = result.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+    
+        // DTO로 변환하여 반환
+        return modelMapper.map(rulebook, RulebookDTO.class);
     }
+    
 
+    //수정
     public void modifyRulebook(RulebookDTO rulebookDTO){
         Optional<Rulebook> result = rulebookRepository.findById(rulebookDTO.getId());
 
@@ -103,8 +97,19 @@ public class RulebookService {
         rulebookRepository.save(rulebook);
     }
 
+    //삭제
     public void deleteRulebook(Integer id){
         rulebookRepository.deleteById(id);
     }
 
+      // 조회수 증가
+      public void incrementViewCount(Integer id) {
+        Optional<Rulebook> rulebookOpt = rulebookRepository.findById(id);
+        
+        // 게시글이 존재하는 경우 조회수 증가
+        rulebookOpt.ifPresent(rulebook -> {
+            rulebook.setViewCount(rulebook.getViewCount() + 1);
+            rulebookRepository.save(rulebook);  // 조회수 증가 후 저장
+        });
+    }
 }

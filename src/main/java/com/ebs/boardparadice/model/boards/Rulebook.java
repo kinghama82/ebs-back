@@ -50,9 +50,19 @@ public class Rulebook {
     @ManyToOne
     private BoardType type;
 
+    
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private int viewCount = 0;  // 조회수, 기본값 0
+
+    
     @PrePersist
     public void prePersist() {
         createdate = LocalDateTime.now();
     }
 
+       // 조회수 증가 메서드
+       public void incrementViewCount() {
+        this.viewCount++;
+       }
+    
 }
