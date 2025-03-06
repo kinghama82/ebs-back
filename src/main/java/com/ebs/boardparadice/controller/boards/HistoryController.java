@@ -72,7 +72,7 @@ public class HistoryController {
     }
 	
 	//기록 상세 열람
-	@GetMapping("/{id}")
+	@GetMapping("/read/{id}")
 	public HistoryDTO get(@PathVariable(name = "id")Integer id) {
 				
 		return historyService.getHistory(id);
