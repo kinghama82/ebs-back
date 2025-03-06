@@ -33,29 +33,9 @@ public class RulebookService {
 
     private final RulebookRepository rulebookRepository;
     private final ModelMapper modelMapper;
+
+
     
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-       // 이미지 업로드 메서드
-    public String uploadImage(MultipartFile image) {
-        try {
-            // 이미지 파일명 처리
-            String fileName = StringUtils.cleanPath(image.getOriginalFilename());
-            File targetFile = new File(uploadDir + File.separator + fileName);
-
-            // 파일을 서버에 저장
-            image.transferTo(targetFile);
-
-            // 파일 URL 생성 (클라이언트가 이미지를 접근할 수 있도록 URL 반환)
-            return ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/upload/")
-                    .path(fileName)
-                    .toUriString();
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패", e);
-        }
-    }
    
 
     public PageResponseDTO<RulebookDTO> getList(PageRequestDTO pageRequestDTO){
@@ -83,14 +63,19 @@ public class RulebookService {
         return responseDTO;
     }
 
+    
     public Integer createRulebook(RulebookDTO rulebookDTO){
         Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
 
+    
         if (rulebookDTO.getImageUrl() != null) {
             rulebook.setImageUrl(rulebookDTO.getImageUrl());
         }
 
         rulebook.setContent(rulebookDTO.getContent());
+        rulebook.setTitle(rulebookDTO.getTitle());
+        
+
         Rulebook savedRulebook = rulebookRepository.save(rulebook);
 
         return savedRulebook.getId();

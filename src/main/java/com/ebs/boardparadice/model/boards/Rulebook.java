@@ -7,6 +7,7 @@ import com.ebs.boardparadice.model.BoardType;
 
 import com.ebs.boardparadice.model.Gamer;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,7 +40,7 @@ public class Rulebook {
     private Gamer writerId;
 
     @ManyToMany
-    private Set<Gamer> voter;
+    private Set<Gamer> voter; 
 
     private LocalDateTime createdate;
 

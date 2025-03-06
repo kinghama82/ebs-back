@@ -29,6 +29,9 @@ public class HistoryDTO {
 	private List<String> mate;
 	
 	private String filepath;
+	
+	
+	
 	private String filename;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yy-MM-dd")
