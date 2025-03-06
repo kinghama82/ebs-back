@@ -1,5 +1,6 @@
 package com.ebs.boardparadice.util;
 
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +18,6 @@ public class JWTUtil {
     private static final String key = "1234567890123456789012345678901234567890";
 
     public static String generateToken(Map<String , Object> valueMap, int minute) {
-
         SecretKey key;
 
         try {

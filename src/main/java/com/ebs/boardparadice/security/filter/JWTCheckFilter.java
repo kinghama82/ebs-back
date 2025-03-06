@@ -20,17 +20,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Log4j2
+//@Log4j2(운영환경에서 과다한로그 출력제한)
 public class JWTCheckFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        log.info("체크urlJWTCheckFilter path: " + path);
+//        log.info("체크urlJWTCheckFilter path: " + path);
 
         // OPTIONS 메서드와 특정 경로에 대해서는 필터를 적용하지 않음
         return request.getMethod().equals("OPTIONS")
                 || path.startsWith("/api/auth")
+                || path.startsWith("/uploads/")
                 || path.equals("/api/gamer/login")
                 || path.equals("/api/gamer/new"); // 정확하게 new 요청만 필터링 제외
     }
@@ -38,7 +39,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        log.info("---------JWTCheckFilter processing request...");
+//        log.info("---------JWTCheckFilter processing request...");
 
         String authHeader = request.getHeader("Authorization");
 
@@ -61,7 +62,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
             } catch (RuntimeException e) {
-                log.error("JWT 검증 실패: " + e.getMessage());
+//                log.error("JWT 검증 실패: " + e.getMessage());
                 response.setContentType("application/json");
                 PrintWriter writer = response.getWriter();
                 writer.write(new Gson().toJson(Map.of("error", "JWT 검증 실패")));
