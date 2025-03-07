@@ -8,4 +8,6 @@ import com.ebs.boardparadice.model.boards.History;
 @Repository
 public interface HistoryRepository extends JpaRepository<History, Integer>{
 
+	
+	
 }

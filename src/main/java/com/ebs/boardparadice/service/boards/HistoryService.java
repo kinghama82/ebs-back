@@ -84,8 +84,14 @@ public class HistoryService {
 		
 		History history = result.orElseThrow();
 		
-		history.setContent(historyDTO.getContent());
 		history.setTitle(historyDTO.getTitle());
+		history.setContent(historyDTO.getContent());
+		history.setDate(historyDTO.getDate());
+		history.setMate(historyDTO.getMate());
+		history.setWin(historyDTO.getWin());
+		history.setDraw(historyDTO.getDraw());
+		history.setLose(historyDTO.getLose());
+		
 		
 		historyRepository.save(history);
 	}

@@ -34,6 +34,6 @@ public class HistoryDTO {
 	
 	private String filename;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yy-MM-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate date;
 }

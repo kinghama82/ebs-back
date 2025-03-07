@@ -92,7 +92,7 @@ public class HistoryController {
 	}
 	//수정
 	@PutMapping("/{id}")
-	public Map<String, String> modify(@PathVariable(name = "id")int id, @RequestBody HistoryDTO historyDTO){
+	public Map<String, String> modify(@PathVariable(name = "id")int id, @ModelAttribute HistoryDTO historyDTO){
 		historyDTO.setId(id);
 		historyService.modifyHistory(historyDTO);
 		return Map.of("result1", "수정 성공");
