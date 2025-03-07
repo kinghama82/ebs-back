@@ -42,7 +42,7 @@ public class CustomSecurityConfig {
         // 로그인 엔드포인트 (예: /api/gamer/login)는 JWTCheckFilter 검증 제외 처리
         http.formLogin(form -> {
             form.loginPage("/api/gamer/login");
-            form.successHandler(new APILoginSuccessHandler());
+            form.successHandler(new com.ebs.boardparadice.security.APILoginSuccessHandler());
             form.failureHandler(new APILoginFailHandler());
         });
 
@@ -64,6 +64,7 @@ public class CustomSecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
     /*@Bean
     public CorsConfigurationSource corsConfigurationSource() {

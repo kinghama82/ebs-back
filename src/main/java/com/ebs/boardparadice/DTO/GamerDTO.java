@@ -1,12 +1,10 @@
 package com.ebs.boardparadice.DTO;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.ebs.boardparadice.controller.formatter.LocalDateFormatter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -64,9 +62,16 @@ public class GamerDTO extends User {
         dataMap.put("phone", phone);
         dataMap.put("address", address);
         dataMap.put("social", social);
-        dataMap.put("createdate", createdate);
+        // LocalDateTime를 LocalDate로 변환한 후 LocalDateFormatter로 문자열로 변환
+        if (createdate != null) {
+            LocalDateFormatter formatter = new LocalDateFormatter();
+            dataMap.put("createdate", formatter.print(createdate.toLocalDate(), Locale.getDefault()));
+        } else {
+            dataMap.put("createdate", null);
+        }
         dataMap.put("level", level);
         dataMap.put("roleNames", roleNames);
         return dataMap;
     }
+
 }
