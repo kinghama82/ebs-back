@@ -3,6 +3,7 @@ package com.ebs.boardparadice.controller.boards;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.HistoryDTO;
+import com.ebs.boardparadice.model.boards.Game;
 import com.ebs.boardparadice.service.boards.HistoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -98,6 +100,12 @@ public class HistoryController {
 		historyDTO.setId(id);
 		historyService.modifyHistory(historyDTO);
 		return Map.of("result1", "수정 성공");
+	}
+	
+	//최근 플레이게임
+	@GetMapping("/recent/{gamerid}")
+	public List<Game> getRecentGames(@PathVariable(name = "gamerid")Integer gamerid){
+		return historyService.getRecentGames(gamerid);
 	}
 	
 }

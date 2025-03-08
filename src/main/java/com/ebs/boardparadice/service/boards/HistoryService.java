@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.HistoryDTO;
+import com.ebs.boardparadice.model.boards.Game;
 import com.ebs.boardparadice.model.boards.History;
 import com.ebs.boardparadice.repository.boards.HistoryRepository;
 import com.ebs.boardparadice.service.GamerService;
@@ -99,6 +100,12 @@ public class HistoryService {
 		
 		
 		historyRepository.save(history);
+	}
+	
+	//최근 플레이게임 리스트
+	public List<Game> getRecentGames(Integer gamerid){
+		Pageable pageable = PageRequest.of(0, 10);
+		return historyRepository.findRecentGamesByGamerId(gamerid, pageable);
 	}
 	
 	
