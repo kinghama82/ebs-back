@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -80,8 +81,9 @@ public class HistoryController {
 	
 	//목록(히스토리메인페이지)
 	@GetMapping("/")
-	public PageResponseDTO<HistoryDTO> list(PageRequestDTO pageRequestDTO){
-		return historyService.getList(pageRequestDTO);
+	public PageResponseDTO<HistoryDTO> list(PageRequestDTO pageRequestDTO,
+				@RequestParam(name = "gamerid", required = false)Integer gamerid){
+		return historyService.getList(pageRequestDTO, gamerid);
 	}
 	
 	//삭제

@@ -51,13 +51,18 @@ public class HistoryService {
 	}
 	
 	//리스트
-	public PageResponseDTO<HistoryDTO> getList(PageRequestDTO pageRequestDTO){
+	public PageResponseDTO<HistoryDTO> getList(PageRequestDTO pageRequestDTO, Integer gamerid){
 		Pageable pageable = PageRequest.of(
 								pageRequestDTO.getPage() -1,
 								pageRequestDTO.getSize(),
 								Sort.by("id").descending());
-		Page<History> result = historyRepository.findAll(pageable);
+		Page<History> result; 
 		
+		if(gamerid != null) {
+			result = historyRepository.findByGamerId(gamerid, pageable);
+		}else {
+			result = historyRepository.findAll(pageable); 
+		}
 		
 		List<HistoryDTO> dtoList = result.getContent().stream()
 					.map(history -> modelMapper.map(history, HistoryDTO.class))
