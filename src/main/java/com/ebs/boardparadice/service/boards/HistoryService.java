@@ -2,6 +2,7 @@ package com.ebs.boardparadice.service.boards;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -108,5 +109,43 @@ public class HistoryService {
 		return historyRepository.findRecentGamesByGamerId(gamerid, pageable);
 	}
 	
+	//연도별 리스트
+	public PageResponseDTO<HistoryDTO> getHistoryByYear(Integer gamerid, Integer year, PageRequestDTO pageRequestDTO) {
+	    Pageable pageable = PageRequest.of(
+	        pageRequestDTO.getPage() - 1,  // 0-based index로 변환
+	        pageRequestDTO.getSize(),
+	        Sort.by("id").descending() 
+	    );
+
+	    Page<History> result = historyRepository.findAllByGamerIdAndYear(gamerid, year, pageable);
+
+	    List<HistoryDTO> dtoList = result.getContent().stream()
+	        .map(history -> modelMapper.map(history, HistoryDTO.class))
+	        .collect(Collectors.toList());
+
+	    return PageResponseDTO.<HistoryDTO>withAll()
+	        .dtoList(dtoList)
+	        .pageRequestDTO(pageRequestDTO)
+	        .totalCount(result.getTotalElements())
+	        .build();
+	}
 	
+	//전체리스트 승무패 횟수
+	public Map<String, Integer> getTotalRecord(Integer gamerid) {
+	    List<Object[]> resultList = historyRepository.countWinDrawLoseByGamerId(gamerid);
+
+	    //리스트에서 첫번째 결과만 가져옴
+	    Object[] result = resultList.isEmpty() ? new Object[] {0,0,0} : resultList.get(0);
+	    
+	    int winCount = ((Number) result[0]).intValue();
+	    int drawCount = ((Number) result[1]).intValue();
+	    int loseCount = ((Number) result[2]).intValue();
+
+	    return Map.of(
+	        "win", winCount,
+	        "draw", drawCount,
+	        "lose", loseCount
+	    );
+	}
+
 }
