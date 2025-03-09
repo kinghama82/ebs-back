@@ -36,4 +36,11 @@ public interface HistoryRepository extends JpaRepository<History, Integer> {
 			+ "FROM History h WHERE h.gamer.id = :gamerid")
 	List<Object[]> countWinDrawLoseByGamerId(@Param("gamerid") Integer gamerid);
 	
+	@Query("SELECT " 
+			+ "COUNT(CASE WHEN h.win = 1 THEN 1 ELSE NULL END), "
+			+ "COUNT(CASE WHEN h.draw = 1 THEN 1 ELSE NULL END), " 
+			+ "COUNT(CASE WHEN h.lose = 1 THEN 1 ELSE NULL END) "
+			+ "FROM History h WHERE h.gamer.id = :gamerid AND FUNCTION('YEAR', h.date) = :year ")
+	List<Object[]> countWinDrawLoseByGamerIdAndYear(@Param("gamerid") Integer gamerid, @Param("year") Integer year);
+	
 }

@@ -116,10 +116,12 @@ public class HistoryController {
 		return historyService.getHistoryByYear(gamerid, year, pageRequestDTO);
 	}
 
-	// 전체 승무패 횟수
+	// 승무패 조회
 	@GetMapping("/totalrecord")
-	public Map<String, Integer> getWinDrawLose(@RequestParam(name = "gamerid") Integer gamerid) {
-		return historyService.getTotalRecord(gamerid);
+	public Map<String, Integer> getWinDrawLose(
+				@RequestParam(name = "gamerid") Integer gamerid,
+				@RequestParam(name = "year", required = false) Integer year) {
+		return historyService.getTotalRecord(gamerid, year);
 	}
 
 }

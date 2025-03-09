@@ -131,9 +131,18 @@ public class HistoryService {
 	}
 	
 	//전체리스트 승무패 횟수
-	public Map<String, Integer> getTotalRecord(Integer gamerid) {
-	    List<Object[]> resultList = historyRepository.countWinDrawLoseByGamerId(gamerid);
+	public Map<String, Integer> getTotalRecord(Integer gamerid, Integer year) {
+	    List<Object[]> resultList;  
 
+	    if(year != null) {
+	    	//특정 연도 승무패 조회
+	    	resultList = historyRepository.countWinDrawLoseByGamerIdAndYear(gamerid, year);
+	    }else {
+	    	//연도가 null이면 전체 기간 조회
+	    	resultList = historyRepository.countWinDrawLoseByGamerId(gamerid);
+	    }
+	    
+	    
 	    //리스트에서 첫번째 결과만 가져옴
 	    Object[] result = resultList.isEmpty() ? new Object[] {0,0,0} : resultList.get(0);
 	    
