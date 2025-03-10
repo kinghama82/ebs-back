@@ -80,6 +80,9 @@ public class RuleBookController {
         return ResponseEntity.ok(rulebookDTO);  // 조회수 증가 후, 게시글 반환
     }
 
+
+
+
     @PostMapping("/create")
     public Map<String, Integer> create(@RequestPart("rulebook") RulebookDTO rulebookDTO,
             @RequestPart(value = "image", required = false) MultipartFile image) {

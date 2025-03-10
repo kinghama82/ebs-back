@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class RulebookService {
@@ -55,8 +56,11 @@ public class RulebookService {
         return responseDTO;
     }
 
-    
+
+
+
     //작성
+
     public Integer createRulebook(RulebookDTO rulebookDTO){
         Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
 
@@ -67,12 +71,16 @@ public class RulebookService {
 
         rulebook.setContent(rulebookDTO.getContent());
         rulebook.setTitle(rulebookDTO.getTitle());
+        rulebook.setWriterId(rulebookDTO.getWriterId());
+        System.out.println(rulebookDTO.getWriterId() + "--------------------");
+
         
 
         Rulebook savedRulebook = rulebookRepository.save(rulebook);
 
         return savedRulebook.getId();
     }
+
 
     //상세보기
     public RulebookDTO getRulebook(Integer id) {
