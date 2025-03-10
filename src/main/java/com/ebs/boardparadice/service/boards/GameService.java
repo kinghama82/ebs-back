@@ -156,12 +156,20 @@ public class GameService {
 
     @Transactional
     public List<GameDTO> searchGames(String keyword) {
-        List<Game> games = gameRepository.findByGameNameContainingOrCompanyContainingOrEnGameNameContaining(
-                keyword, keyword, keyword
+        List<Game> games = gameRepository.searchGames(
+                keyword
         );
+/*
+        // ✅ 검색된 게임 개수 및 내용 출력
+        System.out.println("🔍 검색된 게임 개수: " + games.size());
+        for (Game game : games) {
+            System.out.println("게임 이름: " + game.getGameName());
+        }*/
+
         return games.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
 
 }
