@@ -23,7 +23,7 @@ public class FriendshipController {
     private final GamerService gamerService;
 
     @GetMapping("/{gamerId}")
-    public List<FriendshipDTO> getFriends(@PathVariable Integer gamerId) {
+    public List<FriendshipDTO> getFriends(@PathVariable(name = "gamerId") Integer gamerId) {
         List<Friendship> friendships = friendshipService.getFriendsByGamerId(gamerId);
 
         return friendships.stream()

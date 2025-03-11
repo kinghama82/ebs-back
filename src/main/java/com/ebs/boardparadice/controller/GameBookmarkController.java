@@ -26,18 +26,16 @@ public class GameBookmarkController {
 
     // ✅ 북마크 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeBookmark(@PathVariable Integer id) {
+    public ResponseEntity<Void> removeBookmark(@PathVariable(name = "id") Integer id) {
         gameBookmarkService.removeBookmark(id);
         return ResponseEntity.noContent().build();
     }
 
     // ✅ 특정 사용자의 게임 북마크 목록 조회
     @GetMapping("/{gamerId}")
-    public ResponseEntity<List<GameBookmarkDTO>> getBookmarks(@PathVariable Integer gamerId) {
+    public ResponseEntity<List<GameBookmarkDTO>> getBookmarks(@PathVariable(name = "gamerId") Integer gamerId) {
         List<GameBookmarkDTO> bookmarks = gameBookmarkService.getBookmarksByGamerId(gamerId);
-        if (bookmarks.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        
         return ResponseEntity.ok(bookmarks);
     }
 }
