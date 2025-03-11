@@ -122,6 +122,15 @@ public class GamerController {
         }
     }
 
+    @GetMapping("/nickname/{nickname}")
+    public ResponseEntity<Gamer> getUserByNickname(@PathVariable String nickname) {
+        Gamer gamer = gamerService.findByNickname(nickname);
+        if (gamer == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(gamer);
+    }
+
 
 }
 

@@ -22,6 +22,7 @@ import com.ebs.boardparadice.repository.boards.HistoryRepository;
 import com.ebs.boardparadice.service.GamerService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,7 @@ public class HistoryService {
 	
 	
 	//등록
+	@Transactional
 	public Integer createHistory(HistoryDTO historyDTO) {
 		History history = modelMapper.map(historyDTO, History.class);
 		History saveHistory = historyRepository.save(history);
@@ -42,6 +44,7 @@ public class HistoryService {
 	}
 	
 	//읽기
+	@Transactional
 	public HistoryDTO getHistory(Integer id) {
 		Optional<History> result = historyRepository.findById(id);
 		
@@ -53,6 +56,7 @@ public class HistoryService {
 	}
 	
 	//리스트
+	@Transactional
 	public PageResponseDTO<HistoryDTO> getList(PageRequestDTO pageRequestDTO, Integer gamerid){
 		Pageable pageable = PageRequest.of(
 								pageRequestDTO.getPage() -1,
@@ -86,6 +90,7 @@ public class HistoryService {
 	}
 	
 	//수정
+	@Transactional
 	public void modifyHistory(HistoryDTO historyDTO) {
 		Optional<History> result = historyRepository.findById(historyDTO.getId());
 		
@@ -104,12 +109,14 @@ public class HistoryService {
 	}
 	
 	//최근 플레이게임 리스트
+	@Transactional
 	public List<Game> getRecentGames(Integer gamerid){
 		Pageable pageable = PageRequest.of(0, 10);
 		return historyRepository.findRecentGamesByGamerId(gamerid, pageable);
 	}
 	
 	//연도별 리스트
+	@Transactional
 	public PageResponseDTO<HistoryDTO> getHistoryByYear(Integer gamerid, Integer year, PageRequestDTO pageRequestDTO) {
 	    Pageable pageable = PageRequest.of(
 	        pageRequestDTO.getPage() - 1,  // 0-based index로 변환
@@ -129,8 +136,7 @@ public class HistoryService {
 	        .totalCount(result.getTotalElements())
 	        .build();
 	}
-	
-	//전체리스트 승무패 횟수
+	@Transactional
 	public Map<String, Integer> getTotalRecord(Integer gamerid, Integer year) {
 	    List<Object[]> resultList;  
 

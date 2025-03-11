@@ -83,4 +83,8 @@ public class GamerService {
     public Gamer getGamerById(int id) {
         return gamerRepository.findById(id).orElse(null);
     }
+
+    public Gamer findByNickname(String nickname) {
+        return gamerRepository.findByNickname(nickname).orElse(null);
+    }
 }

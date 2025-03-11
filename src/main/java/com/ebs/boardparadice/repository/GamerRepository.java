@@ -19,5 +19,6 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
     @EntityGraph(attributePaths = "gamerRoleList", type = EntityGraph.EntityGraphType.LOAD)
     @Query("select g from Gamer g where g.email = :email")
     Optional<Gamer> getWithRoles(@Param("email") String email);
+
 }
 
