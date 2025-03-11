@@ -1,20 +1,37 @@
 package com.ebs.boardparadice.model.boards;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.answers.FreeAnswer;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Free {
 
     @Id
@@ -28,14 +45,18 @@ public class Free {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "writer_id", nullable = false)
-    private Gamer writerId;
+    @JoinColumn(name = "gamer_id", nullable = false)
+    private Gamer gamer;
 
     @ManyToMany
     private Set<Gamer> voter;
 
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDate createdate;
+    
+    @ElementCollection
+    @Builder.Default
+    private List<FreeImage> imageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "freeId", cascade = CascadeType.REMOVE)
     private List<FreeAnswer> answerList;
@@ -44,10 +65,16 @@ public class Free {
     @JoinColumn(name = "type_id")
     private BoardType typeId;
 
-    @Column(name = "file_path")
-    private String filepath;
-
-    @Column(name = "file_name")
-    private String filename;
+    public void addImageString(String fileName) {
+    	FreeImage freeImage = FreeImage.builder()
+    							.fileName(fileName)
+    							.id(this.imageList.size())
+    							.build();
+    	imageList.add(freeImage);
+    }
+    
+    public void clearImages() {
+    	this.imageList.clear();
+    }
 
 }

@@ -1,28 +1,38 @@
 package com.ebs.boardparadice.DTO.boards;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Data
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FreeDTO {
 	
 	private int id;
 	private String title;
 	private String content;
-	private Gamer writerId;
-	private String filename;
-	private String filepath;
+	private Gamer gamer;
 	private BoardType typeId;
 	private LocalDate createdate;
 	private Set<Gamer> voter;
+	
+	@Builder.Default
+	private List<String> uploadFileNames = new ArrayList<>();
+	
+	@Builder.Default
+	private List<MultipartFile> files = new ArrayList<>();
 
 }
