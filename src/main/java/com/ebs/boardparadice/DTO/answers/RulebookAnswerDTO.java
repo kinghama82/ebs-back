@@ -19,5 +19,6 @@ public class RulebookAnswerDTO {
     private Gamer writer;
     private String content;
     private LocalDateTime createDate;
+    private String nickname;
 
 }

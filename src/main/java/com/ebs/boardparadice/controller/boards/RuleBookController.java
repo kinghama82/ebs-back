@@ -81,14 +81,28 @@ public class RuleBookController {
     }
 
 
+    /*@PostMapping("/create")
+    public Map<String, Integer> create(@RequestPart("rulebook") MultipartFile rulebookJsonFile) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            RulebookDTO rulebookDTO = objectMapper.readValue(rulebookJsonFile.getInputStream(), RulebookDTO.class);
 
+            System.out.println("받은 데이터: " + rulebookDTO);
+
+            Integer id = rulebookService.createRulebook(rulebookDTO);
+            return Map.of("id", id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Map.of("id", -1);
+        }
+    }*/
 
     @PostMapping("/create")
-    public Map<String, Integer> create(@RequestPart("rulebook") RulebookDTO rulebookDTO,
-            @RequestPart(value = "image", required = false) MultipartFile image) {
+    public Map<String, Integer> create(@RequestPart("rulebook") RulebookDTO rulebookDTO) {
+        System.out.println("-----------받은데이터-----" +  rulebookDTO);
 
         Integer id = rulebookService.createRulebook(rulebookDTO);
-        System.out.println("-------------------------------------123");
+
         return Map.of("id", id);
     }
 

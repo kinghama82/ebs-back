@@ -56,6 +56,13 @@ public class RulebookAnswerService {
         return modelMapper.map(answerRepository.save(answer), RulebookAnswerDTO.class);
     }
 
+/*    public Integer addAnswer(RulebookAnswerDTO rulebookAnswerDTO) {
+        RulebookAnswer rulebookAnswer = modelMapper.map(rulebookAnswerDTO, RulebookAnswer.class);
+        RulebookAnswer savedAnswer = answerRepository.save(rulebookAnswer);
+
+        return savedAnswer.getId();
+    }*/
+
     /**
      * 답글 삭제
      */

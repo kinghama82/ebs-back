@@ -10,6 +10,7 @@ import com.ebs.boardparadice.repository.boards.RulebookRepository;
 
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.digester.Rule;
 import org.modelmapper.ModelMapper;
 
 import org.springframework.data.domain.Page;
@@ -63,6 +64,10 @@ public class RulebookService {
 
     public Integer createRulebook(RulebookDTO rulebookDTO){
         Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
+        Rulebook savedRulebook = rulebookRepository.save(rulebook);
+
+        return savedRulebook.getId();
+       /* Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
 
     
         if (rulebookDTO.getImageUrl() != null) {
@@ -71,14 +76,14 @@ public class RulebookService {
 
         rulebook.setContent(rulebookDTO.getContent());
         rulebook.setTitle(rulebookDTO.getTitle());
-        rulebook.setWriterId(rulebookDTO.getWriterId());
-        System.out.println(rulebookDTO.getWriterId() + "--------------------");
+        rulebook.setWriter(rulebookDTO.getWriter());
+        System.out.println(rulebookDTO.getWriter() + "--------------------");
 
         
 
         Rulebook savedRulebook = rulebookRepository.save(rulebook);
 
-        return savedRulebook.getId();
+        return savedRulebook.getId();*/
     }
 
 

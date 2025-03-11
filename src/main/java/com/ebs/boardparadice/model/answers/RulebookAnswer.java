@@ -27,6 +27,8 @@ public class RulebookAnswer {
 
     private String content;
 
+    private String nickname;
+
     private LocalDateTime createDate;
 
     public void prePersist() {

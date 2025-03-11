@@ -37,7 +37,9 @@ public class Rulebook {
 
     @ManyToOne
     @JoinColumn(name="writer_id")
-    private Gamer writerId;
+    private Gamer writer;
+
+    private String nickname;
 
     @ManyToMany
     private Set<Gamer> voter; 

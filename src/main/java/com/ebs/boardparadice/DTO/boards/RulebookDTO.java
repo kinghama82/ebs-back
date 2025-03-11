@@ -2,8 +2,6 @@ package com.ebs.boardparadice.DTO.boards;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +21,9 @@ public class RulebookDTO {
     private String title;
     private String content;
 
-    private Gamer writerId;
+    private Gamer writer;
+
+    private String nickname;
 
     private Set<Gamer> voter;
     private LocalDateTime createdate;
