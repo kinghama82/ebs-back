@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class FreeService {
 
    private final FreeRepository freeRepository;
-   private final ModelMapper modelMapper;
 
    //글 작성
    public int createFree(FreeDTO freeDTO) {

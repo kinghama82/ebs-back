@@ -1,14 +1,11 @@
-package com.ebs.boardparadice.DTO.boards;
+package com.ebs.boardparadice.DTO.answers;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.boards.Free;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
@@ -20,24 +17,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FreeDTO {
-	
+public class FreeAnswerDTO {
+
 	private int id;
-	private String title;
-	
 	private String content;
+	//gamer id번호만 전달
 	private Gamer gamer;
-	private BoardType typeId;
+	//free id번호만 전달
+	private int free;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime createdate;
 	
 	private Set<Gamer> voter;
 	
-	@Builder.Default
-	private List<String> uploadFileNames = new ArrayList<>();
-	
-	@Builder.Default
-	private List<MultipartFile> files = new ArrayList<>();
-
+	private BoardType typeId;
 }

@@ -138,7 +138,7 @@ public class GameController {
      * 게임 검색 API (GET /api/games/search?keyword=검색어)
      */
     @GetMapping("/search")
-    public ResponseEntity<List<GameDTO>> searchGames(@RequestParam String keyword) {
+    public ResponseEntity<List<GameDTO>> searchGames(@RequestParam(name = "keyword") String keyword) {
         List<GameDTO> games = gameService.searchGames(keyword);
         return new ResponseEntity<>(games, HttpStatus.OK);
     }

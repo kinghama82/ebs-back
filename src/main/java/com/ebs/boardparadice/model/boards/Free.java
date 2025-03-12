@@ -1,6 +1,5 @@
 package com.ebs.boardparadice.model.boards;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class Free {
     @Builder.Default
     private List<FreeImage> imageList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "freeId", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "free", cascade = CascadeType.REMOVE)
     private List<FreeAnswer> answerList;
     
     @ManyToOne
