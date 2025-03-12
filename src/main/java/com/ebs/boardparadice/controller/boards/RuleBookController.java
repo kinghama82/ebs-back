@@ -3,6 +3,7 @@ package com.ebs.boardparadice.controller.boards;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.RulebookDTO;
+import com.ebs.boardparadice.repository.boards.RulebookRepository;
 import com.ebs.boardparadice.service.boards.RulebookService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,21 +28,12 @@ public class RuleBookController {
 
     private final RulebookService rulebookService;
 
+
+    // 이미지 업로드
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
-            System.out.println("파일 업로드 요청");
-            String uploadDir = "/src/main/resources/static/upload/";
-            File directory = new File(uploadDir);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-
-            String fileName = file.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, fileName);
-            Files.write(filePath, file.getBytes());
-
-            String fileUrl = "http://localhost:8080/" + uploadDir + fileName;
+            String fileUrl = rulebookService.uploadImage(file);
             return ResponseEntity.ok(new ImageUploadResponse(fileUrl));
         } catch (IOException e) {
             return ResponseEntity.status(500).body("파일 업로드 실패");
@@ -98,13 +91,23 @@ public class RuleBookController {
     }*/
 
     @PostMapping("/create")
-    public Map<String, Integer> create(@RequestPart("rulebook") RulebookDTO rulebookDTO) {
-        System.out.println("-----------받은데이터-----" +  rulebookDTO);
+    public Map<String, Integer> create(@RequestBody RulebookDTO rulebookDTO) {
+        try {
+            // rulebookDTO가 null인지 체크
+            if (rulebookDTO == null) {
+                return Map.of("id", -1);  // 데이터가 없을 경우
+            }
 
-        Integer id = rulebookService.createRulebook(rulebookDTO);
-
-        return Map.of("id", id);
+            System.out.println("받은 rulebookDTO: {}" +  rulebookDTO);  // 데이터가 정상적으로 왔는지 로그 찍기
+            Integer id = rulebookService.createRulebook(rulebookDTO);
+            return Map.of("id", id);
+        } catch (Exception e) {
+            System.out.println("게시글 생성 중 에러 발생!" + e);
+            return Map.of("id", -1);  // 예외 발생시 id -1 반환
+        }
     }
+
+
 
     @PutMapping("/modify/{id}")
     public Map<String, String> modify(

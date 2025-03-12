@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -28,7 +29,13 @@ public class RulebookDTO {
     private Set<Gamer> voter;
     private LocalDateTime createdate;
     private BoardType type;
-    private String imageUrl;
+
+    // 이미지 URL 리스트
+    private List<String> imageUrls;
+
+    // 유튜브 링크 리스트
+    private List<String> youtubeLinks;
+
 
     @Column(name = "view_count")  // 데이터베이스 컬럼명과 일치시킴
     private int viewCount;
