@@ -60,6 +60,7 @@ public class RulebookService {
         // 이미지 URL과 YouTube 링크를 직접 저장
         rulebook.setImageUrls(rulebookDTO.getImageUrls());
         rulebook.setYoutubeLinks(rulebookDTO.getYoutubeLinks());
+        rulebook.setWriter(rulebookDTO.getWriter());
 
         Rulebook savedRulebook = rulebookRepository.save(rulebook);
         return savedRulebook.getId();
@@ -68,7 +69,7 @@ public class RulebookService {
 
     // 이미지 업로드
     public String uploadImage(MultipartFile file) throws IOException {
-        String uploadDir = "src/main/resources/static/upload/";
+        String uploadDir = "src/main/resources/static/uploads/";
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();  // 업로드 디렉토리가 없으면 생성
@@ -79,7 +80,7 @@ public class RulebookService {
         Files.write(filePath, file.getBytes());
 
         // 반환할 URL
-        return "http://localhost:8080/upload/" + fileName;
+        return "http://localhost:8080/uploads/" + fileName;
     }
 
     // 상세보기

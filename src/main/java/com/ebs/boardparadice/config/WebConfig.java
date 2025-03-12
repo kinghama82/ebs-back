@@ -10,6 +10,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**") // URL에서 "/uploads/파일명"으로 접근 가능
-                .addResourceLocations("file:/home/ubuntu/uploads/"); // 실제 저장 위치
+                .addResourceLocations("file:./src/main/resources/static/uploads/"); // 실제 저장 위치
     }
 }

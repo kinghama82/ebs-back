@@ -3,12 +3,17 @@ package com.ebs.boardparadice.controller.boards;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.RulebookDTO;
+import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.boards.Rulebook;
+import com.ebs.boardparadice.repository.GamerRepository;
 import com.ebs.boardparadice.repository.boards.RulebookRepository;
 import com.ebs.boardparadice.service.boards.RulebookService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,17 +32,32 @@ import java.util.Map;
 public class RuleBookController {
 
     private final RulebookService rulebookService;
+    private final ModelMapper modelMapper;
+    private final RulebookRepository rulebookRepository;
+
+    @Autowired
+    private final GamerRepository gamerRepository;
 
 
     // 이미지 업로드
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
-        try {
-            String fileUrl = rulebookService.uploadImage(file);
-            return ResponseEntity.ok(new ImageUploadResponse(fileUrl));
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("파일 업로드 실패");
+    public String uploadImage(MultipartFile file) throws IOException {
+        // 업로드할 디렉토리 경로
+        String uploadDir = "src/main/resources/static/uploads/";
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();  // 디렉토리가 없으면 생성
         }
+
+        // 파일명과 경로 설정
+        String fileName = file.getOriginalFilename();
+        Path filePath = Paths.get(uploadDir, fileName);
+
+        // 파일을 디스크에 저장
+        Files.write(filePath, file.getBytes());
+
+        // 로컬 URL 반환
+        return "http://localhost:8080/uploads/" + fileName;  // 로컬 서버에서 접근할 수 있는 URL
     }
 
     public static class ImageUploadResponse {
@@ -66,47 +86,12 @@ public class RuleBookController {
     public ResponseEntity<RulebookDTO> get(@PathVariable(name = "id") Integer id) {
         // 게시글을 조회하면서 조회수를 증가시킴
         RulebookDTO rulebookDTO = rulebookService.getRulebook(id);
-    
+
         // 조회수 증가 후, 게시글을 저장하는 로직을 서비스에서 처리
         rulebookService.incrementViewCount(id);
-    
+
         return ResponseEntity.ok(rulebookDTO);  // 조회수 증가 후, 게시글 반환
     }
-
-
-    /*@PostMapping("/create")
-    public Map<String, Integer> create(@RequestPart("rulebook") MultipartFile rulebookJsonFile) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            RulebookDTO rulebookDTO = objectMapper.readValue(rulebookJsonFile.getInputStream(), RulebookDTO.class);
-
-            System.out.println("받은 데이터: " + rulebookDTO);
-
-            Integer id = rulebookService.createRulebook(rulebookDTO);
-            return Map.of("id", id);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Map.of("id", -1);
-        }
-    }*/
-
-    @PostMapping("/create")
-    public Map<String, Integer> create(@RequestBody RulebookDTO rulebookDTO) {
-        try {
-            // rulebookDTO가 null인지 체크
-            if (rulebookDTO == null) {
-                return Map.of("id", -1);  // 데이터가 없을 경우
-            }
-
-            System.out.println("받은 rulebookDTO: {}" +  rulebookDTO);  // 데이터가 정상적으로 왔는지 로그 찍기
-            Integer id = rulebookService.createRulebook(rulebookDTO);
-            return Map.of("id", id);
-        } catch (Exception e) {
-            System.out.println("게시글 생성 중 에러 발생!" + e);
-            return Map.of("id", -1);  // 예외 발생시 id -1 반환
-        }
-    }
-
 
 
     @PutMapping("/modify/{id}")
@@ -134,10 +119,29 @@ public class RuleBookController {
         return Map.of("결과", "성공");
     }
 
-     // 조회수 증가
-     @PostMapping("/{id}/view")
-     public ResponseEntity<String> incrementViewCount(@PathVariable Integer id) {
-         rulebookService.incrementViewCount(id);
-         return ResponseEntity.ok("View count incremented");
-     }
+    // 조회수 증가
+    @PostMapping("/{id}/view")
+    public ResponseEntity<String> incrementViewCount(@PathVariable Integer id) {
+        rulebookService.incrementViewCount(id);
+        return ResponseEntity.ok("View count incremented");
+    }
+
+    @PostMapping("/create")
+    public Rulebook createRulebook(@RequestBody RulebookDTO rulebookDTO) {
+        Rulebook rulebook = new Rulebook();
+
+        // `writerId`를 기반으로 `Gamer` 객체를 찾고, `Rulebook`의 `writer` 필드에 설정
+        Gamer writer = gamerRepository.findById(rulebookDTO.getWriterId()).orElseThrow(() -> new RuntimeException("Writer not found"));
+        rulebook.setWriter(writer);
+
+        rulebook.setTitle(rulebookDTO.getTitle());
+        rulebook.setContent(rulebookDTO.getContent());
+        rulebook.setImageUrls(rulebookDTO.getImageUrls());
+        rulebook.setYoutubeLinks(rulebookDTO.getYoutubeLinks());
+
+        // 추가적인 처리 로직...
+        return rulebookRepository.save(rulebook);  // rulebookRepository.save(rulebook);
+    }
+
+
 }

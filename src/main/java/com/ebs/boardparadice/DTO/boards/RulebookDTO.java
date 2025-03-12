@@ -24,7 +24,8 @@ public class RulebookDTO {
 
     private Gamer writer;
 
-    private String nickname;
+    private int writerId;
+
 
     private Set<Gamer> voter;
     private LocalDateTime createdate;
