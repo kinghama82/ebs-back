@@ -1,6 +1,7 @@
 package com.ebs.boardparadice.model.boards;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +26,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @Builder
+@ToString(exclude = "imageList")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Free {
@@ -52,7 +55,7 @@ public class Free {
     private Set<Gamer> voter;
 
     @Column(name = "createdate", nullable = false, updatable = false)
-    private LocalDate createdate;
+    private LocalDateTime createdate;
     
     @ElementCollection
     @Builder.Default
@@ -73,7 +76,7 @@ public class Free {
     	imageList.add(freeImage);
     }
     
-    public void clearImages() {
+    public void clearList() {
     	this.imageList.clear();
     }
 

@@ -1,6 +1,7 @@
 package com.ebs.boardparadice.DTO.boards;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,10 +26,14 @@ public class FreeDTO {
 	
 	private int id;
 	private String title;
+	
 	private String content;
 	private Gamer gamer;
 	private BoardType typeId;
-	private LocalDate createdate;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+	private LocalDateTime createdate;
+	
 	private Set<Gamer> voter;
 	
 	@Builder.Default
