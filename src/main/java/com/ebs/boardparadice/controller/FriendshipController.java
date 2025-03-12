@@ -73,7 +73,7 @@ public class FriendshipController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeFriend(@PathVariable Integer id) {
+    public ResponseEntity<Void> removeFriend(@PathVariable(name = "id") Integer id) {
         friendshipService.removeFriend(id);
         return ResponseEntity.noContent().build();
     }

@@ -27,7 +27,7 @@ import net.coobird.thumbnailator.Thumbnails;
 @RequiredArgsConstructor
 public class CustomFileUtil {
 
-	@Value("${file.upload-dir}/free")
+	@Value("${upload.dir}")
 	private String uploadPath;
 	
 	@PostConstruct
