@@ -26,6 +26,7 @@ public class FreeDTO {
 	
 	private int id;
 	private String title;
+	
 	private String content;
 	private Gamer gamer;
 	private BoardType typeId;
