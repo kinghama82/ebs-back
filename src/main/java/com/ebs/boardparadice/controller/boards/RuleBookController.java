@@ -144,4 +144,20 @@ public class RuleBookController {
     }
 
 
+    // 추천수 증가
+    @PostMapping("/{id}/vote")
+    public ResponseEntity<String> incrementVoteCount(
+            @PathVariable Integer id,
+            @RequestParam Integer gamerId) {
+
+        try {
+            rulebookService.incrementVoteCount(id, gamerId);
+            return ResponseEntity.ok("추천수가 증가했습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
 }

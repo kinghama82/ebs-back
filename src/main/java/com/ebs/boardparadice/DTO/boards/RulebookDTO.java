@@ -23,11 +23,11 @@ public class RulebookDTO {
     private String content;
 
     private Gamer writer;
-
     private int writerId;
 
-
     private Set<Gamer> voter;
+    private int voteCount;  // 조회수
+
     private LocalDateTime createdate;
     private BoardType type;
 

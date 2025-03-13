@@ -32,9 +32,11 @@ public class Rulebook {
     @JoinColumn(name="writer_id")
     private Gamer writer;
 
-
     @ManyToMany
-    private Set<Gamer> voter; 
+    private Set<Gamer> voter;
+
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private int voteCount = 0;  // 추천수 필드
 
     private LocalDateTime createdate;
 
@@ -68,5 +70,16 @@ public class Rulebook {
        public void incrementViewCount() {
         this.viewCount++;
        }
-    
+
+    // 추천수 증가 메서드
+    public void incrementVoteCount() {
+        this.voteCount++;
+    }
+
+    // 추천 유저 추가 메서드
+    public void addVoter(Gamer gamer) {
+        this.voter.add(gamer);
+        incrementVoteCount();  // 유저 추가 시 추천수 증가
+    }
+
 }
