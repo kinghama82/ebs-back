@@ -1,6 +1,7 @@
 package com.ebs.boardparadice.service.boards;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,10 +14,13 @@ import org.springframework.stereotype.Service;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.answers.FreeAnswerDTO;
 import com.ebs.boardparadice.DTO.boards.FreeDTO;
+import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.model.boards.FreeImage;
 import com.ebs.boardparadice.repository.boards.FreeRepository;
+import com.ebs.boardparadice.service.BoardTypeService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class FreeService {
 
    private final FreeRepository freeRepository;
+   private final BoardTypeService boardTypeService;
 
    //글 작성
    public int createFree(FreeDTO freeDTO) {
@@ -46,6 +51,7 @@ public class FreeService {
 	   List<FreeDTO> dtoList = result.get().map(arr -> {
 		   Free free = (Free) arr[0];
 		   FreeImage freeImage = (FreeImage) arr[1];
+		   Long answerCount = (Long) arr[2];
 		   
 		   FreeDTO freeDTO = FreeDTO.builder()
 				   				.id(free.getId())
@@ -61,6 +67,12 @@ public class FreeService {
 		   }else {
 			   freeDTO.setUploadFileNames(List.of());
 		   }
+		   freeDTO.setAnswerList(new ArrayList<>()); // 빈 리스트 추가
+		    for (int i = 0; i < answerCount; i++) {
+		        freeDTO.getAnswerList().add(new FreeAnswerDTO()); // 가짜 객체 추가 (실제 데이터가 필요하면 따로 가져와야 함)
+		    }
+		   
+		   
 		   return freeDTO;
 	   }).collect(Collectors.toList());			  
 	   
@@ -95,10 +107,26 @@ public class FreeService {
    
    //읽기
    public FreeDTO getFree(int id) {
-	   Optional<Free> result = freeRepository.selectOne(id);
+	   Optional<Free> result = freeRepository.findByIdWithAnswers(id);
 	   Free free = result.orElseThrow();
 	   
 	   FreeDTO freeDTO = entityToDTO(free);
+	   
+	// 댓글 리스트를 변환하여 DTO에 추가
+	    freeDTO.setAnswerList(
+	        free.getAnswerList().stream()
+	            .map(answer -> new FreeAnswerDTO(
+	                answer.getId(),
+	                answer.getContent(),
+	                answer.getGamer(),
+	                answer.getFree().getId(),
+	                answer.getCreatedate(),
+	                answer.getVoter(),
+	                answer.getTypeId()
+	            ))
+	            .collect(Collectors.toList())
+	    );
+	   
 	   return freeDTO;
    }
    
@@ -108,13 +136,16 @@ public class FreeService {
    }
 
    //dto -> entity
-   private Free dtoToEntity(FreeDTO freeDTO) {
+   public Free dtoToEntity(FreeDTO freeDTO) {
+	   
 	   Free free = Free.builder()
 			   .id(freeDTO.getId())
 			   .title(freeDTO.getTitle())
 			   .gamer(freeDTO.getGamer())
 			   .content(freeDTO.getContent())
 			   .createdate(LocalDateTime.now())
+			   .voter(freeDTO.getVoter())
+			   .typeId(freeDTO.getTypeId())
 			   .build();
 	   
 	   List<String> uploadFileNames = freeDTO.getUploadFileNames();
@@ -128,13 +159,24 @@ public class FreeService {
 	   return free;
    }
    //entity -> dto
-   private FreeDTO entityToDTO(Free free) {
+   public FreeDTO entityToDTO(Free free) {
 	   FreeDTO freeDTO = FreeDTO.builder()
 			   .id(free.getId())
 			   .title(free.getTitle())
 			   .gamer(free.getGamer())
 			   .content(free.getContent())
 			   .createdate(free.getCreatedate())
+			   .answerList(
+					   free.getAnswerList() != null ?
+					   free.getAnswerList().stream()
+					   .map(answer -> new FreeAnswerDTO(
+							   answer.getId(), answer.getContent(),
+							   answer.getGamer() , answer.getFree().getId(), 
+							   answer.getCreatedate(), answer.getVoter(), 
+							   answer.getTypeId()))
+					   .collect(Collectors.toList())
+			         : new ArrayList<>())
+			   .voter(free.getVoter())
 			   .build();
 	   List<FreeImage> imageList = free.getImageList();
 	   

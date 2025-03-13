@@ -13,6 +13,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -61,7 +62,8 @@ public class Free {
     private List<FreeImage> imageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "free", cascade = CascadeType.REMOVE)
-    private List<FreeAnswer> answerList;
+    @Builder.Default
+    private List<FreeAnswer> answerList = new ArrayList<>();
     
     @ManyToOne
     @JoinColumn(name = "type_id")

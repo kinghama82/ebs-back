@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.FreeDTO;
+import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.service.boards.FreeService;
 
 import jakarta.annotation.PostConstruct;
@@ -58,10 +59,11 @@ public class FreeController {
 		uploadPath = temFolder.getAbsolutePath();
 	}
 
-	// 상세보기
+	// 상세보기 + 댓리스트
 	@GetMapping("/read/{id}")
-	public FreeDTO get(@PathVariable(name = "id") int id) {
-		return freeService.getFree(id);
+	public ResponseEntity<FreeDTO> get(@PathVariable(name = "id") int id) {
+		FreeDTO dto = freeService.getFree(id);
+		return ResponseEntity.ok(dto);
 	}
 
 	// 리스트

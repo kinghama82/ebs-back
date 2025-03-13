@@ -50,7 +50,10 @@ public class FreeAnswer {
 
     @PrePersist
     public void prePersist() {
-        createdate = LocalDateTime.now();
+    	if(createdate == null) {
+    		createdate = LocalDateTime.now();
+    	}
+        
     }
 
 }

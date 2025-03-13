@@ -7,8 +7,10 @@ import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ebs.boardparadice.DTO.answers.FreeAnswerDTO;
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.answers.FreeAnswer;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +30,8 @@ public class FreeDTO {
 	private String content;
 	private Gamer gamer;
 	private BoardType typeId;
+	
+	private List<FreeAnswerDTO> answerList;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime createdate;

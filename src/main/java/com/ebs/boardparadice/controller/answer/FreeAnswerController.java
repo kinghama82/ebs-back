@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/free/{freeId}/answers")
+@RequestMapping("/api/free/answers")
 public class FreeAnswerController {
 
 	private final FreeAnswerService freeAnswerService;
