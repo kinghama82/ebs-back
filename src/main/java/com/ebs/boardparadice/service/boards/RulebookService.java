@@ -3,7 +3,9 @@ package com.ebs.boardparadice.service.boards;
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.boards.RulebookDTO;
+import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.Rulebook;
+import com.ebs.boardparadice.repository.GamerRepository;
 import com.ebs.boardparadice.repository.boards.RulebookRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,6 +32,7 @@ public class RulebookService {
 
     private final RulebookRepository rulebookRepository;
     private final ModelMapper modelMapper;
+    private final GamerRepository gamerRepository;
 
     // 리스트
     public PageResponseDTO<RulebookDTO> getList(PageRequestDTO pageRequestDTO) {
@@ -120,4 +123,29 @@ public class RulebookService {
             rulebookRepository.save(rulebook);  // 조회수 증가 후 저장
         });
     }
+
+    // 추천수 증가
+    public void incrementVoteCount(Integer rulebookId, Integer gamerId) {
+        Optional<Rulebook> rulebookOpt = rulebookRepository.findById(rulebookId);
+        Optional<Gamer> gamerOpt = gamerRepository.findById(gamerId);
+
+        if (rulebookOpt.isEmpty() || gamerOpt.isEmpty()) {
+            throw new RuntimeException("게시글 또는 유저를 찾을 수 없습니다.");
+        }
+
+        Rulebook rulebook = rulebookOpt.get();
+        Gamer gamer = gamerOpt.get();
+
+        // 이미 추천한 유저인지 체크
+        if (rulebook.getVoter().contains(gamer)) {
+            throw new RuntimeException("이미 추천한 유저입니다.");
+        }
+
+        // 추천수 증가 및 유저 추가
+        rulebook.setVoteCount(rulebook.getVoteCount() + 1);
+        rulebook.getVoter().add(gamer);  // 추천한 유저를 voter 리스트에 추가
+
+        rulebookRepository.save(rulebook);
+    }
+
 }
