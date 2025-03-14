@@ -83,8 +83,8 @@ public class GamerController {
      * - 업로드 후 DB의 profileImage 경로 업데이트
      */
     @PostMapping("/uploadProfile")
-    public ResponseEntity<?> uploadProfileImage(@RequestParam("email") String email,
-                                                @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadProfileImage(@RequestParam(name = "email") String email,
+                                                @RequestParam(name = "file") MultipartFile file) {
         try {
             Gamer updatedGamer = gamerService.updateProfileImage(email, file);
             return ResponseEntity.ok(Map.of(
@@ -139,7 +139,7 @@ public class GamerController {
      * 프로필 이미지 경로 조회
      */
     @GetMapping("/profileImage")
-    public ResponseEntity<?> getProfileImage(@RequestParam("email") String email) {
+    public ResponseEntity<?> getProfileImage(@RequestParam(name = "email") String email) {
         Optional<Gamer> gamerOptional = gamerService.getGamerByEmail(email);
         if (gamerOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("msg", "회원 정보를 찾을 수 없습니다."));
@@ -153,7 +153,7 @@ public class GamerController {
      * 이메일 중복 체크
      */
     @GetMapping("/check-email")
-    public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam String email) {
+    public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam(value = "email") String email) {
         boolean exists = gamerService.getGamerByEmail(email).isPresent();
         return ResponseEntity.ok(Map.of("exists", exists));
     }
@@ -162,7 +162,7 @@ public class GamerController {
      * 닉네임 중복 체크
      */
     @GetMapping("/check-nickname")
-    public ResponseEntity<Map<String, Boolean>> checkNicknameExists(@RequestParam String nickname) {
+    public ResponseEntity<Map<String, Boolean>> checkNicknameExists(@RequestParam(value = "nickname") String nickname) {
         boolean exists = gamerService.getGamerByNickname(nickname).isPresent();
         return ResponseEntity.ok(Map.of("exists", exists));
     }
@@ -171,7 +171,7 @@ public class GamerController {
      * 회원 상세보기 (이메일로 조회)
      */
     @GetMapping("/detail")
-    public ResponseEntity<?> getGamerDetail(@RequestParam String email) {
+    public ResponseEntity<?> getGamerDetail(@RequestParam(value = "email") String email) {
         Optional<Gamer> gamerOptional = gamerService.getGamerByEmail(email);
 
         if (gamerOptional.isPresent()) {

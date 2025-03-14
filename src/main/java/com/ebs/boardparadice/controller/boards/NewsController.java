@@ -43,7 +43,7 @@ public class NewsController {
 
     // ✅ 뉴스 조회
     @GetMapping("/{id}")
-    public ResponseEntity<NewsDTO> getNews(@PathVariable Integer id) {
+    public ResponseEntity<NewsDTO> getNews(@PathVariable(name = "id") Integer id) {
         return ResponseEntity.ok(newsService.getNews(id));
     }
 
@@ -51,8 +51,8 @@ public class NewsController {
     // ✅ GET 요청에서 multipart를 사용하지 않도록 수정
     @GetMapping("/list")
     public ResponseEntity<PageResponseDTO<NewsDTO>> getNewsList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "1", value = "page") int page,
+            @RequestParam(defaultValue = "10", value = "size") int size
     ) {
         PageRequestDTO pageRequestDTO = new PageRequestDTO(page, size);
         return ResponseEntity.ok(newsService.getlist(pageRequestDTO));
@@ -62,9 +62,9 @@ public class NewsController {
     // ✅ 뉴스 작성
     @PostMapping("/")
     public ResponseEntity<?> createNews(
-            @RequestParam("title") String title,
-            @RequestParam("content") String content,
-            @RequestParam("writerId") Integer writerId,
+            @RequestParam(value = "title") String title,
+            @RequestParam(value = "content") String content,
+            @RequestParam(value = "writerId") Integer writerId,
 //            @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
             @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
             @RequestParam(value = "images[]", required = false) MultipartFile[] images) { // ✅ `images[]`로 수정
@@ -104,7 +104,7 @@ public class NewsController {
 
     // ✅ 뉴스 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> modifyNews(@PathVariable Integer id, @RequestBody NewsDTO newsDTO) {
+    public ResponseEntity<Map<String, String>> modifyNews(@PathVariable(name = "id") Integer id, @RequestBody NewsDTO newsDTO) {
         newsDTO.setId(id);
         newsService.modifyNews(newsDTO);
         return ResponseEntity.ok(Map.of("result", "성공"));
@@ -112,7 +112,7 @@ public class NewsController {
 
     // ✅ 뉴스 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteNews(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, String>> deleteNews(@PathVariable(name = "id") Integer id) {
         newsService.deleteNews(id);
         return ResponseEntity.ok(Map.of("결과", "성공"));
     }
