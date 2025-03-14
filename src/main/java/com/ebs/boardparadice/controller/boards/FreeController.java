@@ -60,7 +60,7 @@ public class FreeController {
 	}
 
 	// 상세보기 + 댓리스트
-	@GetMapping("/read/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<FreeDTO> get(@PathVariable(name = "id") int id) {
 		FreeDTO dto = freeService.getFree(id);
 		return ResponseEntity.ok(dto);

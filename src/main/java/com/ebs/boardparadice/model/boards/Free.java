@@ -65,6 +65,7 @@ public class Free {
     @Builder.Default
     private List<FreeAnswer> answerList = new ArrayList<>();
     
+    @Builder.Default
     private BoardType typeId = BoardType.FREE;
 
     public void addImageString(String fileName) {

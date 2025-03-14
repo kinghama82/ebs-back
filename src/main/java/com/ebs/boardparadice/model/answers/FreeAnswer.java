@@ -44,6 +44,7 @@ public class FreeAnswer {
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDateTime createdate;
     
+    @Builder.Default
     private BoardType type = BoardType.ANSWERS;
 
     @PrePersist

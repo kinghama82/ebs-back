@@ -9,7 +9,8 @@ import com.ebs.boardparadice.controller.formatter.LocalDateFormatter;
 
 @Configuration
 public class CustomServletConfig implements WebMvcConfigurer {
-    public void addFormatters(FormatterRegistry registry) {
+    @Override
+	public void addFormatters(FormatterRegistry registry) {
         registry.addFormatter(new LocalDateFormatter());
     }
 

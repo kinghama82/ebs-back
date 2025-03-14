@@ -3,10 +3,9 @@ package com.ebs.boardparadice.DTO.answers;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
