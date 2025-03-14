@@ -65,9 +65,7 @@ public class Free {
     @Builder.Default
     private List<FreeAnswer> answerList = new ArrayList<>();
     
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private BoardType typeId;
+    private BoardType typeId = BoardType.FREE;
 
     public void addImageString(String fileName) {
     	FreeImage freeImage = FreeImage.builder()

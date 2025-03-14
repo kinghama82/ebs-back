@@ -1,22 +1,35 @@
 package com.ebs.boardparadice.controller.boards;
 
-import com.ebs.boardparadice.DTO.PageRequestDTO;
-import com.ebs.boardparadice.DTO.PageResponseDTO;
-import com.ebs.boardparadice.DTO.boards.NewsDTO;
-import com.ebs.boardparadice.service.boards.NewsService;
-import jakarta.servlet.MultipartConfigElement;
-import lombok.RequiredArgsConstructor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.unit.DataSize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import com.ebs.boardparadice.DTO.PageRequestDTO;
+import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.boards.NewsDTO;
+import com.ebs.boardparadice.service.boards.NewsService;
+
+import jakarta.servlet.MultipartConfigElement;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/news")
@@ -52,7 +65,6 @@ public class NewsController {
             @RequestParam("title") String title,
             @RequestParam("content") String content,
             @RequestParam("writerId") Integer writerId,
-            @RequestParam("typeId") Integer typeId,
 //            @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
             @RequestParam(value = "youtubeUrl", required = false) String youtubeUrl,
             @RequestParam(value = "images[]", required = false) MultipartFile[] images) { // ✅ `images[]`로 수정
@@ -62,7 +74,6 @@ public class NewsController {
             System.out.println("Title: " + title);
             System.out.println("Content: " + content);
             System.out.println("Writer ID: " + writerId);
-            System.out.println("Type ID: " + typeId);
             System.out.println("YouTube URL: " + youtubeUrl);
             System.out.println("Images: " + (images != null ? images.length : "No Images"));
 
@@ -78,7 +89,6 @@ public class NewsController {
                     .title(title)
                     .content(content)
                     .writerId(writerId)
-                    .typeId(typeId)
                     .youtubeUrl(youtubeUrl)
                     .imageUrls(imageUrls)
                     .build();

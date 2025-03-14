@@ -44,9 +44,7 @@ public class FreeAnswer {
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDateTime createdate;
     
-    @ManyToOne
-    @JoinColumn(name = "type_id")
-    private BoardType typeId;
+    private BoardType type = BoardType.ANSWERS;
 
     @PrePersist
     public void prePersist() {

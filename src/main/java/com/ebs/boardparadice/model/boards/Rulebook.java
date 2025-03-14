@@ -40,8 +40,7 @@ public class Rulebook {
 
     private LocalDateTime createdate;
 
-    @ManyToOne
-    private BoardType type;
+    private BoardType type = BoardType.RULEBOOK;
 
     
     @Column(nullable = false, columnDefinition = "int default 0")

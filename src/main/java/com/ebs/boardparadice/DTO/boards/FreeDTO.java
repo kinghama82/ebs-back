@@ -29,7 +29,6 @@ public class FreeDTO {
 	
 	private String content;
 	private Gamer gamer;
-	private BoardType typeId;
 	
 	private List<FreeAnswerDTO> answerList;
 	

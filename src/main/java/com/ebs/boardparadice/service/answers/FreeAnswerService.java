@@ -4,7 +4,6 @@ package com.ebs.boardparadice.service.answers;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.ebs.boardparadice.DTO.answers.FreeAnswerDTO;
@@ -61,7 +60,6 @@ public class FreeAnswerService {
 							.gamer(freeAnswer.getGamer())
 							.free(freeAnswer.getFree().getId())
 							.createdate(freeAnswer.getCreatedate())
-							.typeId(freeAnswer.getTypeId())
 							.build();
 		return dto;							
 	}
@@ -70,12 +68,12 @@ public class FreeAnswerService {
 		Free free = freeRepository.findById(dto.getFree())
 					.orElseThrow(() -> new IllegalArgumentException("해당 자유글이 없습니다."));
 		
+		
 		FreeAnswer answer = FreeAnswer.builder()
 							.content(dto.getContent())
 							.gamer(dto.getGamer())
 							.free(free)
 							.createdate(LocalDateTime.now())
-							.typeId(dto.getTypeId())
 							.build();
 		return answer;							
 	}

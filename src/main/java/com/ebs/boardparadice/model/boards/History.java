@@ -50,7 +50,5 @@ public class History {
 	private String filepath;
 	private String filename;
 	
-	@ManyToOne
-	@JoinColumn(name = "type_id")
-	private BoardType type;	
+	private BoardType type = BoardType.HISTORY;
 }

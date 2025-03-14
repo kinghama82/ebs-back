@@ -21,7 +21,8 @@ public class NewsDTO {
     private int writerId;
     private Set<Integer> voterIds = new HashSet<>(); // ✅ 기본값 추가
     private LocalDate createdate;
-    private int typeId;
+
+    
     private String youtubeUrl;
     private List<String> imageUrls;
 }

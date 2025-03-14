@@ -1,5 +1,6 @@
 package com.ebs.boardparadice.model.answers;
 
+import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.Rulebook;
 import jakarta.persistence.*;
@@ -28,6 +29,8 @@ public class RulebookAnswer {
     private String content;
 
     private String nickname;
+    
+    private BoardType type = BoardType.ANSWERS;
 
     private LocalDateTime createDate;
 

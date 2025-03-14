@@ -1,5 +1,6 @@
 package com.ebs.boardparadice.model.answers;
 
+import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.News;
 import jakarta.persistence.*;
@@ -34,6 +35,8 @@ public class NewsAnswer {
 
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDate createdate;
+    
+    private BoardType type = BoardType.ANSWERS;
 
     @PrePersist
     public void prePersist() {

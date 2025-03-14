@@ -33,9 +33,7 @@ public class Question {
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDate createdate;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "type_id")
-    private BoardType typeId;
+    private BoardType typeId = BoardType.QUESTION;
 
     @Column(name = "file_path")
     private String filepath;

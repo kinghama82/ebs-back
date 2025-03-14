@@ -1,16 +1,16 @@
 package com.ebs.boardparadice.DTO.boards;
 
-import com.ebs.boardparadice.model.BoardType;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 import com.ebs.boardparadice.model.Gamer;
+
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -29,7 +29,6 @@ public class RulebookDTO {
     private int voteCount;  // 조회수
 
     private LocalDateTime createdate;
-    private BoardType type;
 
     // 이미지 URL 리스트
     private List<String> imageUrls;

@@ -16,11 +16,9 @@ import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.answers.FreeAnswerDTO;
 import com.ebs.boardparadice.DTO.boards.FreeDTO;
-import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.model.boards.FreeImage;
 import com.ebs.boardparadice.repository.boards.FreeRepository;
-import com.ebs.boardparadice.service.BoardTypeService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +27,6 @@ import lombok.RequiredArgsConstructor;
 public class FreeService {
 
    private final FreeRepository freeRepository;
-   private final BoardTypeService boardTypeService;
 
    //글 작성
    public int createFree(FreeDTO freeDTO) {
@@ -121,8 +118,7 @@ public class FreeService {
 	                answer.getGamer(),
 	                answer.getFree().getId(),
 	                answer.getCreatedate(),
-	                answer.getVoter(),
-	                answer.getTypeId()
+	                answer.getVoter()
 	            ))
 	            .collect(Collectors.toList())
 	    );
@@ -145,7 +141,6 @@ public class FreeService {
 			   .content(freeDTO.getContent())
 			   .createdate(LocalDateTime.now())
 			   .voter(freeDTO.getVoter())
-			   .typeId(freeDTO.getTypeId())
 			   .build();
 	   
 	   List<String> uploadFileNames = freeDTO.getUploadFileNames();
@@ -172,8 +167,7 @@ public class FreeService {
 					   .map(answer -> new FreeAnswerDTO(
 							   answer.getId(), answer.getContent(),
 							   answer.getGamer() , answer.getFree().getId(), 
-							   answer.getCreatedate(), answer.getVoter(), 
-							   answer.getTypeId()))
+							   answer.getCreatedate(), answer.getVoter()))
 					   .collect(Collectors.toList())
 			         : new ArrayList<>())
 			   .voter(free.getVoter())

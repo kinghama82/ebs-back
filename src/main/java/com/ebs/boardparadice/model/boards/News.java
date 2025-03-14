@@ -36,9 +36,7 @@ public class News {
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDate createdate;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "type_id")
-    private BoardType typeId;
+    private BoardType typeId = BoardType.NEWS;
 
 
     @ElementCollection

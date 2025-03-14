@@ -1,15 +1,11 @@
 package com.ebs.boardparadice.service.boards;
 
-import com.ebs.boardparadice.DTO.PageRequestDTO;
-import com.ebs.boardparadice.DTO.PageResponseDTO;
-import com.ebs.boardparadice.DTO.boards.NewsDTO;
-import com.ebs.boardparadice.model.BoardType;
-import com.ebs.boardparadice.model.Gamer;
-import com.ebs.boardparadice.model.boards.News;
-import com.ebs.boardparadice.repository.GamerRepository;
-import com.ebs.boardparadice.repository.BoardTypeRepository;
-import com.ebs.boardparadice.repository.boards.NewsRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.ebs.boardparadice.DTO.PageRequestDTO;
+import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.boards.NewsDTO;
+import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.boards.News;
+import com.ebs.boardparadice.repository.GamerRepository;
+import com.ebs.boardparadice.repository.boards.NewsRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -29,24 +29,20 @@ public class NewsService {
 
     private final NewsRepository newsRepository;
     private final GamerRepository gamerRepository;
-    private final BoardTypeRepository boardTypeRepository;
     private final ModelMapper modelMapper;
 
 
     // ✅ 뉴스 생성 (이미지 URL & 유튜브 링크 추가)
     public Integer createNews(NewsDTO newsDTO) {
         Optional<Gamer> gamerOpt = gamerRepository.findById(newsDTO.getWriterId());
-        Optional<BoardType> boardTypeOpt = boardTypeRepository.findById(newsDTO.getTypeId());
 
-        if (gamerOpt.isEmpty() || boardTypeOpt.isEmpty()) {
-            throw new IllegalArgumentException("작성자 또는 게시판 타입이 존재하지 않습니다.");
-        }
+       
 
         News news = new News();
         news.setTitle(newsDTO.getTitle());
         news.setContent(newsDTO.getContent());
         news.setWriterId(gamerOpt.get());
-        news.setTypeId(boardTypeOpt.get());
+        
 
         // ✅ `voterIds`가 `null`이면 빈 `Set`으로 초기화하여 NullPointerException 방지
         Set<Integer> voterIds = newsDTO.getVoterIds() != null ? newsDTO.getVoterIds() : new HashSet<>();
@@ -72,7 +68,6 @@ public class NewsService {
                 .title(news.getTitle())
                 .content(news.getContent())
                 .writerId(news.getWriterId().getId())
-                .typeId(news.getTypeId().getId())
                 .voterIds(news.getVoter().stream().map(Gamer::getId).collect(Collectors.toSet()))
                 .createdate(news.getCreatedate())
                 .imageUrls(news.getImageUrls()) // ✅ 이미지 포함
