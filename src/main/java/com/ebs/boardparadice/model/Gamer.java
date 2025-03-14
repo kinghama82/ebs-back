@@ -80,4 +80,7 @@ public class Gamer {
     public void prePersist() {
         createdate = LocalDateTime.now();
     }
+
+    @Column
+    private String profileImage;
 }

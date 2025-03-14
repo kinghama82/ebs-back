@@ -52,18 +52,20 @@ public class CustomSecurityConfig {
         return http.build();
     }
 
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*")); // ✅ 모든 오리진 허용
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://43.202.30.85:3000")); // ✅ 특정 오리진 지정
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // ✅ 반드시 true 설정
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
 
     /*@Bean

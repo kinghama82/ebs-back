@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,10 +40,16 @@ public class News {
     @JoinColumn(name = "type_id")
     private BoardType typeId;
 
-    @Column(name = "file_path")
-    private String filepath;
 
-    @Column(name = "file_name")
-    private String filename;
+    @ElementCollection
+    private List<String> imageUrls = new ArrayList<>();  // ✅ 기본값 설정
 
+
+    @Column(name = "youtube_url")
+    private String youtubeUrl; // ✅ 유튜브 링크 저장 가능
+
+    @PrePersist
+    public void prePersist() {
+        this.createdate = LocalDate.now();
+    }
 }

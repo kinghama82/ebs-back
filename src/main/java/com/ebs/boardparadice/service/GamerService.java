@@ -68,6 +68,7 @@ public class GamerService {
                 gamer.isSocial(),
                 gamer.getCreatedate(),
                 gamer.getLevel(),
+                gamer.getProfileImage(),
                 roleNames
         );
     }
@@ -86,5 +87,13 @@ public class GamerService {
 
     public Gamer findByNickname(String nickname) {
         return gamerRepository.findByNickname(nickname).orElse(null);
+    }
+
+    /**
+     * Gamer 정보 업데이트 (프로필 이미지 포함)
+     */
+    @Transactional
+    public Gamer updateGamer(Gamer gamer) {
+        return gamerRepository.save(gamer);
     }
 }

@@ -28,13 +28,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         Gamer gamer = gamerRepository.getWithRoles(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 유저를 찾을 수 없습니다: " + username));
 
-        // 역할 정보 추출 (MemberRole이 enum으로 정의되었다고 가정)
+        // 역할 정보 추출
         List<String> roleNames = gamer.getGamerRoleList()
                 .stream()
                 .map(Enum::name)
                 .collect(Collectors.toList());
 
-        // GamerDTO를 생성하여 반환 (UserDetails를 상속받고 있음)
+        // 🔹 GamerDTO를 생성하여 반환 (UserDetails 구현체로 사용 가능)
         return new GamerDTO(
                 gamer.getId(),
                 gamer.getName(),
@@ -47,6 +47,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 gamer.isSocial(),
                 gamer.getCreatedate(),
                 gamer.getLevel(),
+                gamer.getProfileImage(),
                 roleNames
         );
     }

@@ -5,21 +5,29 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.ebs.boardparadice.controller.formatter.LocalDateFormatter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @ToString
-public class GamerDTO extends User {
+@NoArgsConstructor // 기본 생성자
+public class GamerDTO implements UserDetails { // 🔹 User 대신 UserDetails 직접 구현
 
-    private int id;
+    private Integer id;
     private String name;
-    private int age;
+    private Integer age;
     private String email;
     private String password;
     private String nickname;
@@ -28,14 +36,12 @@ public class GamerDTO extends User {
     private boolean social;
     private LocalDateTime createdate;
     private String level;
-
+    private String profileImage;
     private List<String> roleNames = new ArrayList<>();
 
-    public GamerDTO(int id, String name, int age, String email, String password, String nickname, String phone, String address, boolean social, LocalDateTime createdate, String level, List<String> roleNames) {
-        super(email, password,
-                (roleNames != null ? roleNames : new ArrayList<>())
-                        .stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .collect(Collectors.toList()));
+    public GamerDTO(Integer id, String name, Integer age, String email, String password, String nickname,
+                    String phone, String address, boolean social, LocalDateTime createdate, String level,
+                    String profileImage, List<String> roleNames) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -47,31 +53,58 @@ public class GamerDTO extends User {
         this.social = social;
         this.createdate = createdate;
         this.level = level;
+        this.profileImage = profileImage;
         this.roleNames = roleNames != null ? roleNames : new ArrayList<>();
     }
 
-
+    // 🔹 JWT 생성에 필요한 데이터를 Map으로 변환하는 메서드 추가
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("id", id);
         dataMap.put("name", name);
         dataMap.put("age", age);
         dataMap.put("email", email);
-        dataMap.put("password", password);
         dataMap.put("nickname", nickname);
         dataMap.put("phone", phone);
         dataMap.put("address", address);
         dataMap.put("social", social);
-        // LocalDateTime를 LocalDate로 변환한 후 LocalDateFormatter로 문자열로 변환
-        if (createdate != null) {
-            LocalDateFormatter formatter = new LocalDateFormatter();
-            dataMap.put("createdate", formatter.print(createdate.toLocalDate(), Locale.getDefault()));
-        } else {
-            dataMap.put("createdate", null);
-        }
+        dataMap.put("profileImage", profileImage);
         dataMap.put("level", level);
         dataMap.put("roleNames", roleNames);
+
         return dataMap;
     }
 
+    // 🔹 UserDetails 인터페이스 구현
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roleNames.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
