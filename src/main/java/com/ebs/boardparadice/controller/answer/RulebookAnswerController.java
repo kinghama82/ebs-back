@@ -40,9 +40,17 @@ public class RulebookAnswerController {
         return ResponseEntity.ok(createdAnswer);
     }
 
-    /**
-     * 답글 삭제
-     */
+    /** 답글 수정 */
+    @PutMapping("/{answerId}")
+    public ResponseEntity<RulebookAnswerDTO> updateAnswer(
+            @PathVariable int answerId,
+            @RequestBody Map<String, String> requestBody) {
+
+        String content = requestBody.get("content");
+        return ResponseEntity.ok(answerService.updateAnswer(answerId, content));
+    }
+
+    /** 답글 삭제 */
     @DeleteMapping("/{answerId}")
     public ResponseEntity<String> deleteAnswer(@PathVariable int answerId) {
         answerService.deleteAnswer(answerId);

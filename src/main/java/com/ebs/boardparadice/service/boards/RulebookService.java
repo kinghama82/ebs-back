@@ -69,23 +69,6 @@ public class RulebookService {
         return savedRulebook.getId();
     }
 
-
-    // 이미지 업로드
-    public String uploadImage(MultipartFile file) throws IOException {
-        String uploadDir = "src/main/resources/static/uploads/";
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();  // 업로드 디렉토리가 없으면 생성
-        }
-
-        String fileName = file.getOriginalFilename();
-        Path filePath = Paths.get(uploadDir, fileName);
-        Files.write(filePath, file.getBytes());
-
-        // 반환할 URL
-        return "http://localhost:8080/uploads/" + fileName;
-    }
-
     // 상세보기
     public RulebookDTO getRulebook(Integer id) {
         // 게시글 조회
@@ -147,5 +130,13 @@ public class RulebookService {
 
         rulebookRepository.save(rulebook);
     }
+
+    // 제목으로 룰북 검색
+    public List<RulebookDTO> searchRulebooksByTitle(String title) {
+        return rulebookRepository.findByTitleContainingIgnoreCase(title).stream()
+                .map(rulebook -> modelMapper.map(rulebook, RulebookDTO.class))
+                .collect(Collectors.toList());
+    }
+
 
 }

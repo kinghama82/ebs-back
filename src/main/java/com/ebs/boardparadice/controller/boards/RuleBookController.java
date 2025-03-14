@@ -158,6 +158,13 @@ public class RuleBookController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<RulebookDTO>> searchRulebooks(@RequestParam String title) {
+        List<RulebookDTO> rulebooks = rulebookService.searchRulebooksByTitle(title);
+        return ResponseEntity.ok(rulebooks);
+    }
+
+
 
 
 }

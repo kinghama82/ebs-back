@@ -55,13 +55,15 @@ public class RulebookAnswerService {
 
         return modelMapper.map(answerRepository.save(answer), RulebookAnswerDTO.class);
     }
+    /** 답글 수정 */
+    public RulebookAnswerDTO updateAnswer(int answerId, String content) {
+        RulebookAnswer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new RuntimeException("답글을 찾을 수 없습니다."));
 
-/*    public Integer addAnswer(RulebookAnswerDTO rulebookAnswerDTO) {
-        RulebookAnswer rulebookAnswer = modelMapper.map(rulebookAnswerDTO, RulebookAnswer.class);
-        RulebookAnswer savedAnswer = answerRepository.save(rulebookAnswer);
+        answer.setContent(content);
 
-        return savedAnswer.getId();
-    }*/
+        return modelMapper.map(answerRepository.save(answer), RulebookAnswerDTO.class);
+    }
 
     /**
      * 답글 삭제
