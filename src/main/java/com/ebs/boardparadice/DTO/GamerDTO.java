@@ -71,6 +71,13 @@ public class GamerDTO implements UserDetails { // 🔹 User 대신 UserDetails �
         dataMap.put("profileImage", profileImage);
         dataMap.put("level", level);
         dataMap.put("roleNames", roleNames);
+        // LocalDateTime를 LocalDate로 변환한 후 LocalDateFormatter로 문자열로 변환
+        if (createdate != null) {
+            LocalDateFormatter formatter = new LocalDateFormatter();
+            dataMap.put("createdate", formatter.print(createdate.toLocalDate(), Locale.getDefault()));
+        } else {
+            dataMap.put("createdate", null);
+        }
 
         return dataMap;
     }

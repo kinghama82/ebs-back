@@ -14,11 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -90,34 +85,55 @@ public class GamerController {
     @PostMapping("/uploadProfile")
     public ResponseEntity<?> uploadProfileImage(@RequestParam("email") String email,
                                                 @RequestParam("file") MultipartFile file) {
+        try {
+            Gamer updatedGamer = gamerService.updateProfileImage(email, file);
+            return ResponseEntity.ok(Map.of(
+                    "msg", "프로필 이미지가 성공적으로 업데이트되었습니다.",
+                    "profileImage", updatedGamer.getProfileImage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "프로필 이미지 업데이트 실패: " + e.getMessage()));
+        }
+    }
+
+//    기존코드
+    /*@PostMapping("/uploadProfile")
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("email") String email,
+                                                @RequestParam("file") MultipartFile file) {
         Optional<Gamer> gamerOptional = gamerService.getGamerByEmail(email);
         if (gamerOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("msg", "회원 정보를 찾을 수 없습니다."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("msg", "회원 정보를 찾을 수 없습니다."));
         }
 
         Gamer gamer = gamerOptional.get();
         try {
-            // 업로드 폴더 없으면 생성
+            // UPLOAD_DIR: 프로젝트 루트 기준으로 "src/main/resources/static/uploads/profile/"에 저장
+            final String UPLOAD_DIR = "src/main/resources/static/uploads/profile/";
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
 
-            // 파일명 중복 방지 위해 UUID 사용
+            // 파일명 중복 방지: UUID 사용
             String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path filepath = Paths.get(UPLOAD_DIR, filename);
             Files.write(filepath, file.getBytes());
 
             // DB에 이미지 경로 업데이트
-            gamer.setProfileImage("/profile_images/" + filename);
+            // WebConfig에서 /uploads/** -> file:./src/main/resources/static/uploads/ 로 매핑되어 있으므로
+            // 프론트에서 접근할 때는 "/uploads/profile/파일명" 으로 접근
+            gamer.setProfileImage("/uploads/profile/" + filename);
             gamerService.updateGamer(gamer);
 
             return ResponseEntity.ok(Map.of("msg", "프로필 사진이 업로드되었습니다.", "profileImage", gamer.getProfileImage()));
         } catch (IOException e) {
             log.error("파일 업로드 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("msg", "파일 업로드 중 오류 발생"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("msg", "파일 업로드 중 오류 발생"));
         }
-    }
+    }*/
 
     /**
      * 프로필 이미지 경로 조회

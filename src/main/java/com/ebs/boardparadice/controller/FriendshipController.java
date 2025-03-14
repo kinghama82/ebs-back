@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,12 +24,18 @@ public class FriendshipController {
     private final GamerService gamerService;
 
     @GetMapping("/{gamerId}")
-    public List<FriendshipDTO> getFriends(@PathVariable(name = "gamerId") Integer gamerId) {
+    public ResponseEntity<List<FriendshipDTO>> getFriends(@PathVariable(name = "gamerId") Integer gamerId) {
         List<Friendship> friendships = friendshipService.getFriendsByGamerId(gamerId);
 
-        return friendships.stream()
-                .map(FriendshipDTO::new)  // DTO 생성자 사용하여 변환
+        if (friendships.isEmpty()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        List<FriendshipDTO> friendsList = friendships.stream()
+                .map(FriendshipDTO::new) // ✅ `friendImg` 포함된 DTO로 변환
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(friendsList);
     }
 
 

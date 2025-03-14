@@ -16,11 +16,13 @@ public class FriendshipDTO {
     private Integer gamerId;
     private Integer friendId;
     private String friendNickname;  // 친구 닉네임 추가!
+    private String friendImg;       // ✅ 친구의 프로필 이미지 추가!
 
     public FriendshipDTO(Friendship friendship) {
         this.id = friendship.getId();
         this.gamerId = friendship.getGamer().getId();
         this.friendId = friendship.getFriend().getId();
         this.friendNickname = friendship.getFriend().getNickname();  // 친구 닉네임 설정
+        this.friendImg = friendship.getFriend().getProfileImage();  // ✅ 친구의 프로필 이미지 설정
     }
 }
