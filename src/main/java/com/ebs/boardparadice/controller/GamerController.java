@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/gamer")
@@ -25,8 +26,6 @@ public class GamerController {
 
     private final GamerService gamerService;
 
-    // 업로드 디렉토리
-    private static final String UPLOAD_DIR = "uploads/profile_images/";
 
     /**
      * 회원가입 (비밀번호 확인, 이메일/닉네임 중복 체크)
@@ -136,6 +135,29 @@ public class GamerController {
     }*/
 
     /**
+     * 회원 정보 업데이트 (예: 닉네임, 전화번호, 주소 등 변경)
+     */
+    @PutMapping("/update")
+    public ResponseEntity<?> updateGamer(@RequestBody GamerDTO gamerDTO) {
+        // 기존 회원 정보가 존재하는지 확인
+        Optional<Gamer> optionalGamer = gamerService.getGamerByEmail(gamerDTO.getEmail());
+        if (optionalGamer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("msg", "해당 이메일의 회원을 찾을 수 없습니다."));
+        }
+        Gamer gamer = optionalGamer.get();
+
+        // 업데이트할 필드를 설정 (여기서는 닉네임, 전화번호, 주소를 예시로 함)
+        gamer.setNickname(gamerDTO.getNickname());
+        gamer.setPhone(gamerDTO.getPhone());
+        gamer.setAddress(gamerDTO.getAddress());
+        // 필요하다면 다른 필드도 업데이트
+
+        Gamer updatedGamer = gamerService.updateGamer(gamer);
+        return ResponseEntity.ok(updatedGamer);
+    }
+
+    /**
      * 프로필 이미지 경로 조회
      */
     @GetMapping("/profileImage")
@@ -242,5 +264,28 @@ public class GamerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
         return ResponseEntity.ok(gamer);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<GamerDTO>> searchGamers(@RequestParam String nickname) {
+        List<Gamer> gamers = gamerService.searchGamersByNickname(nickname);
+        List<GamerDTO> result = gamers.stream()
+                .map(g -> new GamerDTO(
+                        g.getId(),
+                        g.getName(),
+                        g.getAge(),
+                        g.getEmail(),
+                        g.getPassword(),
+                        g.getNickname(),
+                        g.getPhone(),
+                        g.getAddress(),
+                        g.isSocial(),
+                        g.getCreatedate(),
+                        g.getLevel(),
+                        g.getProfileImage(),
+                        g.getGamerRoleList() != null ? g.getGamerRoleList().stream().map(Enum::name).toList() : null
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 }

@@ -139,4 +139,8 @@ public class GamerService {
         gamer.setProfileImage(profileImageUrl);
         return gamerRepository.save(gamer);
     }
+
+    public List<Gamer> searchGamersByNickname(String nickname) {
+        return gamerRepository.searchByNickname(nickname);
+    }
 }

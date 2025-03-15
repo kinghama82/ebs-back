@@ -9,11 +9,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.ebs.boardparadice.controller.formatter.LocalDateFormatter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.ebs.boardparadice.controller.formatter.LocalDateFormatter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +27,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor // 기본 생성자
-public class GamerDTO implements UserDetails { // 🔹 User 대신 UserDetails 직접 구현
+public class GamerDTO implements UserDetails { // UserDetails 구현체
 
     private Integer id;
     private String name;
@@ -58,7 +61,7 @@ public class GamerDTO implements UserDetails { // 🔹 User 대신 UserDetails �
         this.roleNames = roleNames != null ? roleNames : new ArrayList<>();
     }
 
-    // 🔹 JWT 생성에 필요한 데이터를 Map으로 변환하는 메서드 추가
+    // JWT 생성에 필요한 데이터를 Map으로 변환
     public Map<String, Object> getClaims() {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("id", id);
@@ -79,12 +82,12 @@ public class GamerDTO implements UserDetails { // 🔹 User 대신 UserDetails �
         } else {
             dataMap.put("createdate", null);
         }
-
         return dataMap;
     }
 
-    // 🔹 UserDetails 인터페이스 구현
+    // getAuthorities()는 JSON 변환 대상에서 제외합니다.
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roleNames.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))

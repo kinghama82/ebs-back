@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,6 +20,11 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
     @EntityGraph(attributePaths = "gamerRoleList", type = EntityGraph.EntityGraphType.LOAD)
     @Query("select g from Gamer g where g.email = :email")
     Optional<Gamer> getWithRoles(@Param("email") String email);
+
+    // GamerRepository.java
+    @Query("SELECT g FROM Gamer g WHERE LOWER(g.nickname) LIKE LOWER(CONCAT('%', :nickname, '%'))")
+    List<Gamer> searchByNickname(@Param("nickname") String nickname);
+
 
 }
 
