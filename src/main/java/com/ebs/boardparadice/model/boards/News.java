@@ -2,6 +2,8 @@ package com.ebs.boardparadice.model.boards;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.answers.NewsAnswer;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +39,9 @@ public class News {
     private LocalDate createdate;
 
     private BoardType typeId = BoardType.NEWS;
+    
+    @OneToMany(mappedBy = "news", cascade = CascadeType.REMOVE)
+    private List<NewsAnswer> answerList = new ArrayList<>();
 
 
     @ElementCollection

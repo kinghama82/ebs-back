@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.DTO.boards.NewsDTO;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.News;
@@ -60,10 +61,10 @@ public class NewsService {
 
     // ✅ 뉴스 조회 (이미지 URL & 유튜브 링크 포함)
     public NewsDTO getNews(Integer id) {
-        Optional<News> result = newsRepository.findById(id);
+        Optional<News> result = newsRepository.findByIdWithAnswers(id);
         News news = result.orElseThrow();
 
-        return NewsDTO.builder()
+        NewsDTO newsDTO = NewsDTO.builder()
                 .id(news.getId())
                 .title(news.getTitle())
                 .content(news.getContent())
@@ -73,6 +74,21 @@ public class NewsService {
                 .imageUrls(news.getImageUrls()) // ✅ 이미지 포함
                 .youtubeUrl(news.getYoutubeUrl()) // ✅ 유튜브 링크 포함
                 .build();
+        // 댓글 리스트를 추가 (AnswerDTO 변환)
+        newsDTO.setAnswerList(
+            news.getAnswerList().stream()
+                .map(answer -> AnswerDTO.builder()
+                    .id(answer.getId())
+                    .content(answer.getContent())
+                    .gamer(answer.getGamer())
+                    .createdate(answer.getCreatedate())
+                    .voter(answer.getVoter())
+                    .news(answer.getNews().getId())  // ✅ 뉴스 게시글 ID 저장
+                    .build())
+                .collect(Collectors.toList())
+        );
+
+        return newsDTO;
     }
 
 

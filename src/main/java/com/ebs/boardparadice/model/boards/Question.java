@@ -2,11 +2,16 @@ package com.ebs.boardparadice.model.boards;
 
 import com.ebs.boardparadice.model.BoardType;
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.answers.QuestionAnswer;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,9 +34,12 @@ public class Question {
 
     @ManyToMany
     private Set<Gamer> voter;
+    
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<QuestionAnswer> answerList = new ArrayList<>();
 
     @Column(name = "createdate", nullable = false, updatable = false)
-    private LocalDate createdate;
+    private LocalDateTime createdate;
 
     private BoardType typeId = BoardType.QUESTION;
 

@@ -67,6 +67,9 @@ public class Free {
     
     @Builder.Default
     private BoardType typeId = BoardType.FREE;
+    
+    @Builder.Default
+    private int view = 0;
 
     public void addImageString(String fileName) {
     	FreeImage freeImage = FreeImage.builder()

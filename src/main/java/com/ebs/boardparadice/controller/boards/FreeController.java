@@ -128,6 +128,17 @@ public class FreeController {
 			return Map.of("result", "등록 실패", "error", e.getMessage());
 		}
 	}
+	//조회수 top5
+	@GetMapping("/view5")
+	public ResponseEntity<List<FreeDTO>> getView5(){
+		List<FreeDTO> view5List = freeService.getViewTop5();
+		return ResponseEntity.ok(view5List);
+	}
+	//조회수 증가
+	@GetMapping("/{id}/view")
+	public void plusView(@PathVariable(name = "id")int id){
+		freeService.plusFreeView(id);
+	}
 
 	// 파일저장
 	public List<String> saveFiles(List<MultipartFile> files) throws RuntimeException {

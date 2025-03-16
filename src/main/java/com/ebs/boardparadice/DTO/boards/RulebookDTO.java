@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.model.Gamer;
 
 import jakarta.persistence.Column;
@@ -29,6 +30,8 @@ public class RulebookDTO {
     private int voteCount;  // 조회수
 
     private LocalDateTime createdate;
+    
+    private List<AnswerDTO> answerList;
 
     // 이미지 URL 리스트
     private List<String> imageUrls;

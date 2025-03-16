@@ -49,9 +49,9 @@ public class RulebookAnswerService {
 
         RulebookAnswer answer = new RulebookAnswer();
         answer.setRulebook(rulebook);
-        answer.setWriter(writer);
+        answer.setGamer(writer);
         answer.setContent(content);
-        answer.setCreateDate(LocalDateTime.now());
+        answer.setCreatedate(LocalDateTime.now());
 
         return modelMapper.map(answerRepository.save(answer), RulebookAnswerDTO.class);
     }

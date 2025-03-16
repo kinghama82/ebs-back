@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ebs.boardparadice.DTO.answers.AnswerDTO;
+
 @Data
 @Builder
 @NoArgsConstructor  // ✅ 기본 생성자 추가
@@ -22,6 +24,7 @@ public class NewsDTO {
     private Set<Integer> voterIds = new HashSet<>(); // ✅ 기본값 추가
     private LocalDate createdate;
 
+    private List<AnswerDTO> answerList;
     
     private String youtubeUrl;
     private List<String> imageUrls;

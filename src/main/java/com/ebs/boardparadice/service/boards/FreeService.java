@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
-import com.ebs.boardparadice.DTO.answers.FreeAnswerDTO;
+import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.DTO.boards.FreeDTO;
 import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.model.boards.FreeImage;
@@ -37,50 +37,62 @@ public class FreeService {
    }
    
    //리스트
-   public PageResponseDTO<FreeDTO> getList(PageRequestDTO pageRequestDTO){
-	   Pageable pageable = PageRequest.of(
-			   				pageRequestDTO.getPage() -1,
-			   				pageRequestDTO.getSize(),
-			   				Sort.by("id").descending());
-	   
-	   Page<Object[]> result = freeRepository.selectList(pageable);
-	   
-	   List<FreeDTO> dtoList = result.get().map(arr -> {
-		   Free free = (Free) arr[0];
-		   FreeImage freeImage = (FreeImage) arr[1];
-		   Long answerCount = (Long) arr[2];
-		   
-		   FreeDTO freeDTO = FreeDTO.builder()
-				   				.id(free.getId())
-				   				.title(free.getTitle())
-				   				.content(free.getContent())
-				   				.gamer(free.getGamer())
-				   				.createdate(LocalDateTime.now())
-				   				.build();
-		   
-		   if(freeImage != null) {
-			   String imageStr = freeImage.getFileName();
-			   freeDTO.setUploadFileNames(List.of());
-		   }else {
-			   freeDTO.setUploadFileNames(List.of());
-		   }
-		   freeDTO.setAnswerList(new ArrayList<>()); // 빈 리스트 추가
-		    for (int i = 0; i < answerCount; i++) {
-		        freeDTO.getAnswerList().add(new FreeAnswerDTO()); // 가짜 객체 추가 (실제 데이터가 필요하면 따로 가져와야 함)
-		    }
-		   
-		   
-		   return freeDTO;
-	   }).collect(Collectors.toList());			  
-	   
-	   Long totalCount = result.getTotalElements();
-	   
-	   return PageResponseDTO.<FreeDTO>withAll()
-			   				.dtoList(dtoList)
-			   				.pageRequestDTO(pageRequestDTO)
-			   				.totalCount(totalCount)
-			   				.build();
-   }
+   public PageResponseDTO<FreeDTO> getList(PageRequestDTO pageRequestDTO) {
+	    Pageable pageable = PageRequest.of(
+	            pageRequestDTO.getPage() - 1,
+	            pageRequestDTO.getSize(),
+	            Sort.by("id").descending());
+
+	    Page<Object[]> result = freeRepository.selectList(pageable);
+
+	    List<FreeDTO> dtoList = result.get().map(arr -> {
+	        Free free = (Free) arr[0];
+	        FreeImage freeImage = (FreeImage) arr[1];
+	        Long answerCount = (Long) arr[2];
+
+	        FreeDTO freeDTO = FreeDTO.builder()
+	                .id(free.getId())
+	                .title(free.getTitle())
+	                .content(free.getContent())
+	                .gamer(free.getGamer())
+	                .createdate(free.getCreatedate())
+	                .view(free.getView())
+	                .voter(free.getVoter())
+	                .build();
+
+	        if (freeImage != null) {
+	            String imageStr = freeImage.getFileName();
+	            freeDTO.setUploadFileNames(List.of());
+	        } else {
+	            freeDTO.setUploadFileNames(List.of());
+	        }
+
+	        // ✅ 댓글 리스트를 `AnswerDTO`로 변경
+	        freeDTO.setAnswerList(new ArrayList<>());
+	        for (int i = 0; i < answerCount; i++) {
+	            freeDTO.getAnswerList().add(
+	                AnswerDTO.builder()
+	                    .id(0)  // ✅ 가짜 객체이므로 ID는 0으로 설정
+	                    .content("댓글 더미데이터")  // ✅ 내용도 더미 데이터로 설정 가능
+	                    .gamer(null)  // ✅ 실제 댓글이 아니므로 `null` 설정
+	                    .createdate(LocalDateTime.now())
+	                    .voter(null)
+	                    .free(free.getId())  // ✅ 자유게시판 댓글이므로 `free` 필드 사용
+	                    .build()
+	            );
+	        }
+
+	        return freeDTO;
+	    }).collect(Collectors.toList());
+
+	    Long totalCount = result.getTotalElements();
+
+	    return PageResponseDTO.<FreeDTO>withAll()
+	            .dtoList(dtoList)
+	            .pageRequestDTO(pageRequestDTO)
+	            .totalCount(totalCount)
+	            .build();
+	}
    
    //수정
    public void modifyFree(FreeDTO freeDTO) {
@@ -112,14 +124,14 @@ public class FreeService {
 	// 댓글 리스트를 변환하여 DTO에 추가
 	    freeDTO.setAnswerList(
 	        free.getAnswerList().stream()
-	            .map(answer -> new FreeAnswerDTO(
-	                answer.getId(),
-	                answer.getContent(),
-	                answer.getGamer(),
-	                answer.getFree().getId(),
-	                answer.getCreatedate(),
-	                answer.getVoter()
-	            ))
+	            .map(answer -> AnswerDTO.builder()
+	            		.id(answer.getId())
+	            		.content(answer.getContent())
+	                    .gamer(answer.getGamer())
+	                    .createdate(answer.getCreatedate())
+	                    .voter(answer.getVoter())
+	                    .free(answer.getFree().getId())
+	                    .build())
 	            .collect(Collectors.toList())
 	    );
 	   
@@ -131,6 +143,26 @@ public class FreeService {
 	   freeRepository.deleteById(id);
    }
 
+   //추천
+   
+   //조회수 탑5
+   public List<FreeDTO> getViewTop5(){
+	     Pageable pageable = PageRequest.of(0, 5);
+	     List<Free> view5List = freeRepository.findByViewTop5(pageable);
+	     return view5List.stream()
+	    		 .map(this::entityToDTO)
+	    		 .collect(Collectors.toList());	     
+   }
+   //조회수증가
+   public void plusFreeView(int id) {
+	   Optional<Free> result = freeRepository.findById(id);
+	   if(result.isPresent()) {
+		   Free free = result.get();
+		   free.setView(free.getView()+1);
+		   freeRepository.save(free);
+	   }
+   }
+   
    //dto -> entity
    public Free dtoToEntity(FreeDTO freeDTO) {
 	   
@@ -164,14 +196,18 @@ public class FreeService {
 			   .answerList(
 					   free.getAnswerList() != null ?
 					   free.getAnswerList().stream()
-					   .map(answer -> new FreeAnswerDTO(
-							   answer.getId(), answer.getContent(),
-							   answer.getGamer() , answer.getFree().getId(), 
-							   answer.getCreatedate(), answer.getVoter()))
-					   .collect(Collectors.toList())
-			         : new ArrayList<>())
-			   .voter(free.getVoter())
-			   .build();
+					   .map(answer -> AnswerDTO.builder()
+		                        .id(answer.getId())
+		                        .content(answer.getContent())
+		                        .gamer(answer.getGamer())
+		                        .createdate(answer.getCreatedate())
+		                        .voter(answer.getVoter())
+		                        .free(answer.getFree().getId())  // ✅ 자유게시판이므로 `free` 필드 사용
+		                        .build())
+		                    .collect(Collectors.toList())
+		                : new ArrayList<>())  // ✅ `answerList`가 없으면 빈 리스트 반환
+		            .voter(free.getVoter())
+		            .build();
 	   List<FreeImage> imageList = free.getImageList();
 	   
 	   if(imageList == null || imageList.size() == 0) {
