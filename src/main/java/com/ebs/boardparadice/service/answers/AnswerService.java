@@ -100,40 +100,7 @@ public class AnswerService {
             default:
                 throw new IllegalArgumentException("잘못된 게시판 타입");
         }
-    }
-    
-    //수정
-    @Transactional
-    public void modifyAnswer(String boardType, AnswerDTO dto) {
-    	switch (boardType) {
-		case "free":
-			Optional<FreeAnswer> result = freeAnswerRepository.findById(dto.getId());
-			FreeAnswer freeAnswer = result.orElseThrow();
-			freeAnswer.setContent(dto.getContent());
-			freeAnswerRepository.save(freeAnswer);
-			break;
-		case "question":
-			Optional<QuestionAnswer> result2 = questionAnswerRepository.findById(dto.getId());
-			QuestionAnswer questionAnswer = result2.orElseThrow();
-			questionAnswer.setContent(dto.getContent());
-			questionAnswerRepository.save(questionAnswer);
-			break;
-		case "news":
-			Optional<NewsAnswer> result3 = newsAnswerRepository.findById(dto.getId());
-			NewsAnswer newsAnswer = result3.orElseThrow();
-			newsAnswer.setContent(dto.getContent());
-			newsAnswerRepository.save(newsAnswer);
-			break;
-		case "rulebook":	
-			Optional<RulebookAnswer> result4 = rulebookAnswerRepository.findById(dto.getId());
-			RulebookAnswer rulebookAnswer = result4.orElseThrow();
-			rulebookAnswer.setContent(dto.getContent());
-			rulebookAnswerRepository.save(rulebookAnswer);	
-			break;
-		default:
-			throw new IllegalArgumentException("잘못된 보드타입: " + boardType);
-		}
-    }
+    }   
 
     //삭제
     @Transactional

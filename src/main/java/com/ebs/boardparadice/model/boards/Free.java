@@ -10,6 +10,7 @@ import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.answers.FreeAnswer;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -57,7 +58,8 @@ public class Free {
     @Column(name = "createdate", nullable = false, updatable = false)
     private LocalDateTime createdate;
     
-    @ElementCollection
+    @ElementCollection // ✅ 이미지 리스트 저장
+    @CollectionTable(name = "free_image_list", joinColumns = @JoinColumn(name = "free_id"))
     @Builder.Default
     private List<FreeImage> imageList = new ArrayList<>();
 
