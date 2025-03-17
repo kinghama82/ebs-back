@@ -50,5 +50,5 @@ public class History {
 	private String filepath;
 	private String filename;
 	
-	private BoardType type = BoardType.HISTORY;
+	private BoardType typeId = BoardType.HISTORY;
 }

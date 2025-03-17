@@ -43,7 +43,7 @@ import net.coobird.thumbnailator.Thumbnails;
 @Log4j2
 public class NewsController {
 
-	@Value("${upload.dir}/free")
+	@Value("${upload.dir}/news")
 	private String uploadPath;
 
 	@PostConstruct
