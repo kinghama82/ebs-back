@@ -257,18 +257,19 @@ public class FreeService {
    
    public FreeDTO sanitizeContent(FreeDTO freeDTO) {
 	    String content = freeDTO.getContent();
+	    
 
-	    // ✅ `img` 태그의 `src` 속성을 유지하면서 불필요한 속성 제거
+	 // ✅ <img> 태그의 src 속성만 유지
 	    content = content.replaceAll("(?i)<img\\s+[^>]*src=['\"]([^'\"]+)['\"][^>]*>", "<img src=\"$1\">");
 
-	    // ✅ `iframe` 태그의 `src` 속성을 유지하면서 불필요한 속성 제거
-	    content = content.replaceAll("(?i)<iframe\\s+[^>]*src=['\"]([^'\"]+)['\"][^>]*>", "<iframe src=\"$1\">");
+	    // ✅ <iframe> 태그의 src 속성만 유지 (div를 포함하고 있으면 div를 제거)
+	    content = content.replaceAll("(?i)<div[^>]*data-youtube-video[^>]*>(<iframe[^>]*src=['\"]([^'\"]+)['\"][^>]*></iframe>)</div>", "$1");
 
 	    // ✅ `<script>` 같은 위험한 태그 제거
 	    content = content.replaceAll("(?i)<script.*?</script>", "");
 
+	    
 	    freeDTO.setContent(content);
-	    System.out.println("최종 저장 백엔드 : " + freeDTO.getContent());
 	    return freeDTO;
 	}
 
