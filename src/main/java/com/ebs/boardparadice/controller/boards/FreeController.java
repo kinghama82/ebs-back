@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +30,6 @@ import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
 import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.DTO.boards.FreeDTO;
-import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.service.boards.FreeService;
 
 import jakarta.annotation.PostConstruct;
@@ -84,31 +81,38 @@ public class FreeController {
 
 	// 수정
 	@PutMapping("/{id}")
-	public Map<String, String> modify(@PathVariable(name = "id") int id, FreeDTO freeDTO) {
-		freeDTO.setId(id);
-		FreeDTO oldFreedDto = freeService.getFree(id);
-		
-		List<String> oldFileNames = oldFreedDto.getUploadFileNames();
-		List<MultipartFile> files = freeDTO.getFiles();
-		List<String> currentUploadFileNames = saveFiles(files);
-		List<String> uploadFileNames = freeDTO.getUploadFileNames();
-		
-		if(currentUploadFileNames != null && currentUploadFileNames.size() > 0) {
-			uploadFileNames.addAll(currentUploadFileNames);
-		}
-		
-		freeDTO.setUploadFileNames(uploadFileNames);
-		freeService.modifyFree(freeDTO);
-		
-		if(oldFileNames != null && oldFileNames.size() > 0) {
-			List<String> removeFiles = oldFileNames.stream()
-					.filter(fileName -> uploadFileNames.indexOf(fileName) == -1)
-					.collect(Collectors.toList());
-			deleteFiles(removeFiles);
-		}
-		
-		return Map.of("result", "수정 성공");
+	public ResponseEntity<String> modify(@PathVariable(name = "id") int id, @RequestBody FreeDTO freeDTO) {
+	    freeDTO.setId(id);
+	    FreeDTO oldFreeDTO = freeService.getFree(id);
+
+	    List<String> oldFileNames = oldFreeDTO.getUploadFileNames();
+	    List<String> newFileNames = freeDTO.getUploadFileNames();
+
+	    log.info("기존 이미지: " + oldFileNames);
+	    log.info("새 이미지: " + newFileNames);
+
+	    // ✅ 기존 파일이 있고, 새 파일이 다른 경우 기존 파일 삭제
+	    if (oldFileNames != null && !oldFileNames.isEmpty() &&
+	        newFileNames != null && !newFileNames.isEmpty() &&
+	        !oldFileNames.get(0).equals(newFileNames.get(0))) {
+
+	        Path oldFilePath = Paths.get(uploadPath, oldFileNames.get(0));
+	        try {
+	            Files.deleteIfExists(oldFilePath);
+	            log.info("기존 이미지 삭제 완료: " + oldFilePath.toString());
+	        } catch (IOException e) {
+	            log.error("기존 이미지 삭제 실패: " + e.getMessage());
+	        }
+	    }
+
+	 // ✅ 새로운 이미지 파일명 저장 (항상 1개만 유지)
+	    if (newFileNames != null && newFileNames.size() > 1) {
+	        freeDTO.setUploadFileNames(newFileNames.subList(0, 1));
+	    }
+	    freeService.modifyFree(freeDTO);
+	    return ResponseEntity.ok("수정 성공");
 	}
+
 
 	// 삭제
 	@DeleteMapping("/{id}")
@@ -126,18 +130,27 @@ public class FreeController {
 
 	// 등록
 	@PostMapping(value = "/", consumes = { "application/json" })
-	public ResponseEntity<Map<String, String>> create(@RequestBody FreeDTO freeDTO) {
-		if (freeDTO.getGamer() == null || freeDTO.getGamer().getId() == 0) {
-	        return ResponseEntity.badRequest().body(Map.of("error", "작성자 정보 없음"));
+	public ResponseEntity<String> create(@RequestBody FreeDTO freeDTO) {
+	    log.info("📩 받은 payload: " + freeDTO);
+	    log.info("📸 업로드된 파일 목록: " + freeDTO.getUploadFileNames());
+
+	    if (freeDTO.getGamer() == null || freeDTO.getGamer().getId() == 0) {
+	        return ResponseEntity.badRequest().body("작성자 정보 없음");
+	    }
+
+	    // ✅ 항상 1개의 파일만 유지
+	    if (freeDTO.getUploadFileNames() != null && freeDTO.getUploadFileNames().size() > 1) {
+	        freeDTO.setUploadFileNames(freeDTO.getUploadFileNames().subList(0, 1));
 	    }
 
 	    try {
-	        int id = freeService.createFree(freeDTO);
-	        return ResponseEntity.ok(Map.of("result", "등록 성공"));
+	        freeService.createFree(freeDTO);
+	        return ResponseEntity.ok("등록 성공");
 	    } catch (Exception e) {
-	        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+	        return ResponseEntity.badRequest().body(e.getMessage());
 	    }
 	}
+
 	//조회수 top5
 	@GetMapping("/view5")
 	public ResponseEntity<List<FreeDTO>> getView5(){
@@ -169,11 +182,12 @@ public class FreeController {
 	//이미지업로드
 	@PostMapping(value = "/upload", consumes = { "multipart/form-data" })
 	public ResponseEntity<List<String>> uploadFiles(
-			@RequestParam(value = "files", required = false) List<MultipartFile> files) {
+			@RequestParam(value = "file", required = false) List<MultipartFile> files) {
 		List<String> uploadedFiles = new ArrayList<>();
 		
 		//파일이 없는 경우 정상 응답 반환
 	    if (files == null || files.isEmpty()) {
+	    	log.warn("업로드할 파일이 없습니다.");
 	        return ResponseEntity.ok(uploadedFiles);
 	    }
 	    for (MultipartFile file : files) {
@@ -181,9 +195,12 @@ public class FreeController {
 	        Path savePath = Paths.get(uploadPath, savedName);
 
 	        try {
+	            log.info("파일 저장 시작: " + savePath.toString());
 	            Files.copy(file.getInputStream(), savePath);
-	            uploadedFiles.add( savedName );
+	            uploadedFiles.add(savedName);
+	            log.info("파일 저장 완료: " + savedName);
 	        } catch (IOException e) {
+	            log.error("파일 저장 실패: " + e.getMessage());
 	            return ResponseEntity.internalServerError().build();
 	        }
 	    }
@@ -191,9 +208,11 @@ public class FreeController {
 	    return ResponseEntity.ok(uploadedFiles);
 	}
 	
+	//이미지삭제
 	@DeleteMapping("/deleteFiles")
-	public ResponseEntity<String> deleteFile(@RequestBody List<String> fileNames) {
-	    deleteFiles(fileNames);
+	public ResponseEntity<String> deleteFile(@RequestParam(name = "fileNames") String fileName) {
+		List<String> fileNames = List.of(fileName);
+		deleteFiles(fileNames);
 	    return ResponseEntity.ok("파일 삭제 완료");
 	}
 
