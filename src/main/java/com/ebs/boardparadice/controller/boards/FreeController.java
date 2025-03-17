@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.DTO.boards.FreeDTO;
 import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.service.boards.FreeService;
@@ -65,6 +67,13 @@ public class FreeController {
 		FreeDTO dto = freeService.getFree(id);
 		return ResponseEntity.ok(dto);
 	}
+	//댓글만 소환
+	@GetMapping("/{id}/answers")
+	public ResponseEntity<List<AnswerDTO>> getAnswers(@PathVariable(name = "id")int id){
+		FreeDTO dto = freeService.getFree(id);
+		return ResponseEntity.ok(dto.getAnswerList());
+	}
+	
 
 	// 리스트
 	@GetMapping("/")
@@ -111,23 +120,85 @@ public class FreeController {
 	//이미지보기
 	@GetMapping("/view/{fileName}")
 	public ResponseEntity<Resource> viewFileGet(@PathVariable(name = "fileName") String fileName){
+		
 		return getFile(fileName);
 	}
 
 	// 등록
-	@PostMapping(value = "/", consumes = { "multipart/form-data" })
-	public Map<String, String> create(@ModelAttribute FreeDTO freeDTO) {
-		try {
-			List<MultipartFile> files = freeDTO.getFiles();
-			List<String> uploadFileNames = saveFiles(files);
-			freeDTO.setUploadFileNames(uploadFileNames);
-			int id = freeService.createFree(freeDTO);
+	@PostMapping(value = "/", consumes = { "application/json" })
+	public ResponseEntity<Map<String, String>> create(@RequestBody FreeDTO freeDTO) {
+		if (freeDTO.getGamer() == null || freeDTO.getGamer().getId() == 0) {
+	        return ResponseEntity.badRequest().body(Map.of("error", "작성자 정보 없음"));
+	    }
 
-			return Map.of("result", "등록 성공", "id", String.valueOf(id));
+	    try {
+	        int id = freeService.createFree(freeDTO);
+	        return ResponseEntity.ok(Map.of("result", "등록 성공"));
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+	    }
+	}
+	//조회수 top5
+	@GetMapping("/view5")
+	public ResponseEntity<List<FreeDTO>> getView5(){
+		return ResponseEntity.ok(freeService.getViewTop5());
+	}
+	//추천수 top5
+	@GetMapping("/vote5")
+	public ResponseEntity<List<FreeDTO>> getVote5(){
+		return ResponseEntity.ok(freeService.getVoteTop5());
+	}
+	
+	//조회수 증가
+	@GetMapping("/{id}/view")
+	public void plusView(@PathVariable(name = "id")int id){
+		freeService.plusFreeView(id);
+	}
+	//추천수 증가
+	@PostMapping("/{id}/vote")
+	public ResponseEntity<String> plusVote(
+				@PathVariable(name = "id") int freeId,
+				@RequestParam(name = "gamerId") int gamerId){
+		try {
+			freeService.plusFreeVote(freeId, gamerId);
+			return ResponseEntity.ok("추천수 증가");
 		} catch (Exception e) {
-			return Map.of("result", "등록 실패", "error", e.getMessage());
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
+	//이미지업로드
+	@PostMapping(value = "/upload", consumes = { "multipart/form-data" })
+	public ResponseEntity<List<String>> uploadFiles(
+			@RequestParam(value = "files", required = false) List<MultipartFile> files) {
+		List<String> uploadedFiles = new ArrayList<>();
+		
+		//파일이 없는 경우 정상 응답 반환
+	    if (files == null || files.isEmpty()) {
+	        return ResponseEntity.ok(uploadedFiles);
+	    }
+	    for (MultipartFile file : files) {
+	        String savedName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+	        Path savePath = Paths.get(uploadPath, savedName);
+
+	        try {
+	            Files.copy(file.getInputStream(), savePath);
+	            uploadedFiles.add( savedName );
+	        } catch (IOException e) {
+	            return ResponseEntity.internalServerError().build();
+	        }
+	    }
+
+	    return ResponseEntity.ok(uploadedFiles);
+	}
+	
+	@DeleteMapping("/deleteFiles")
+	public ResponseEntity<String> deleteFile(@RequestBody List<String> fileNames) {
+	    deleteFiles(fileNames);
+	    return ResponseEntity.ok("파일 삭제 완료");
+	}
+
+
+
 
 	// 파일저장
 	public List<String> saveFiles(List<MultipartFile> files) throws RuntimeException {

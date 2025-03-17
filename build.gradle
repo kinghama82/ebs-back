@@ -52,6 +52,8 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	
 	implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.19'
+	// WebFlux 의존성 추가
+   implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

@@ -2,6 +2,7 @@ package com.ebs.boardparadice.service.boards;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.DTO.boards.RulebookDTO;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.Rulebook;
@@ -75,8 +76,16 @@ public class RulebookService {
         Optional<Rulebook> result = rulebookRepository.findById(id);
         Rulebook rulebook = result.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
+        //댓리스트를 dto에 추가
+        RulebookDTO rulebookDTO = modelMapper.map(rulebook, RulebookDTO.class);
+        
+        rulebookDTO.setAnswerList(
+        		rulebook.getAnswerList().stream()
+        		.map(answer -> modelMapper.map(answer, AnswerDTO.class))
+        		.collect(Collectors.toList()));
+        
         // DTO로 변환하여 반환
-        return modelMapper.map(rulebook, RulebookDTO.class);
+        return rulebookDTO;
     }
 
     // 수정

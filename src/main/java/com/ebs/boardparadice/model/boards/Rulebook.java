@@ -8,6 +8,7 @@ import java.util.Set;
 import com.ebs.boardparadice.model.BoardType;
 
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.answers.RulebookAnswer;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,6 +42,9 @@ public class Rulebook {
     private LocalDateTime createdate;
 
     private BoardType type = BoardType.RULEBOOK;
+    
+    @OneToMany(mappedBy = "rulebook", cascade = CascadeType.REMOVE)
+    private List<RulebookAnswer> answerList = new ArrayList<>();
 
     
     @Column(nullable = false, columnDefinition = "int default 0")
