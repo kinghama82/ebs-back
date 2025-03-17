@@ -79,36 +79,44 @@ public class NewsController {
  		return newsService.getList(pageRequestDTO);
  	}
 
- 	// 수정
- 	@PutMapping("/{id}")
- 	public ResponseEntity<String> modify(@PathVariable(name = "id") int id, @RequestBody NewsDTO newsDTO) {
- 	    newsDTO.setId(id);
- 	    NewsDTO oldNewsDTO = newsService.getNews(id);
+	// 수정
+	@PutMapping("/{id}")
+	public ResponseEntity<String> modify(@PathVariable(name = "id") int id, @RequestBody NewsDTO newsDTO) {
+	    newsDTO.setId(id);
+	    NewsDTO oldNewsDTO = newsService.getNews(id);
 
- 	    List<String> oldFileNames = oldNewsDTO.getUploadFileNames();
- 	    List<String> newFileNames = newsDTO.getUploadFileNames();
+	    List<String> oldFileNames = oldNewsDTO.getUploadFileNames();
+	    List<String> newFileNames = newsDTO.getUploadFileNames();
 
- 	    // ✅ 기존 파일이 있고, 새 파일이 다른 경우 기존 파일 삭제
- 	    if (oldFileNames != null && !oldFileNames.isEmpty() &&
- 	        newFileNames != null && !newFileNames.isEmpty() &&
- 	        !oldFileNames.get(0).equals(newFileNames.get(0))) {
+	    log.info("기존 이미지: " + oldFileNames);
+	    log.info("새 이미지: " + newFileNames);
 
- 	        Path oldFilePath = Paths.get(uploadPath, oldFileNames.get(0));
- 	        try {
- 	            Files.deleteIfExists(oldFilePath);
- 	            log.info("기존 이미지 삭제 완료: " + oldFilePath.toString());
- 	        } catch (IOException e) {
- 	            log.error("기존 이미지 삭제 실패: " + e.getMessage());
- 	        }
- 	    }
+	    // ✅ 기존 파일이 있고, 새 파일이 다르면 기존 파일 삭제
+	    if (oldFileNames != null && !oldFileNames.isEmpty() &&
+	        newFileNames != null && !newFileNames.isEmpty()) {
 
- 	 // ✅ 새로운 이미지 파일명 저장 (항상 1개만 유지)
- 	    if (newFileNames != null && newFileNames.size() > 1) {
- 	        newsDTO.setUploadFileNames(newFileNames.subList(0, 1));
- 	    }
- 	    newsService.modifyNews(newsDTO);
- 	    return ResponseEntity.ok("수정 성공");
- 	}
+	        String oldFile = oldFileNames.get(0);
+	        String newFile = newFileNames.get(0);
+
+	        if (oldFile != null && newFile != null && !oldFile.equals(newFile)) { // ✅ null 체크 추가
+	            Path oldFilePath = Paths.get(uploadPath, oldFile);
+	            try {
+	                Files.deleteIfExists(oldFilePath);
+	                log.info("기존 이미지 삭제 완료: " + oldFilePath.toString());
+	            } catch (IOException e) {
+	                log.error("기존 이미지 삭제 실패: " + e.getMessage());
+	            }
+	        }
+	    }
+
+	    // ✅ 새로운 이미지 파일명 저장 (항상 1개만 유지)
+	    if (newFileNames != null && newFileNames.size() > 1) {
+	        newsDTO.setUploadFileNames(newFileNames.subList(0, 1));
+	    }
+
+	    newsService.modifyNews(newsDTO);
+	    return ResponseEntity.ok("수정 성공");
+	}
 
 
  	// 삭제
