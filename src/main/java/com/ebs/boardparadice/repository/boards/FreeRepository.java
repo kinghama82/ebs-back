@@ -50,6 +50,9 @@ public interface FreeRepository extends JpaRepository<Free, Integer> {
 	        + "ORDER BY SIZE(f.voter) DESC")
 	List<Free> findByVoteTop5(Pageable pageable);
 
-	
-	
+	@Query("SELECT f FROM Free f WHERE f.gamer.id = :gamerId ORDER BY f.createdate DESC")
+	List<Free> findByGamerId(@Param("gamerId") int gamerId);
+
+
+
 }

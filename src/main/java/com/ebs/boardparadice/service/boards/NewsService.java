@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.ebs.boardparadice.DTO.boards.FreeDTO;
+import com.ebs.boardparadice.model.boards.Free;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -142,4 +144,18 @@ public class NewsService {
                 .totalCount(totalCount)
                 .build();
     }
+/*
+    public List<NewsDTO> getPostsByGamerId(int gamerId) {
+        List<News> newsPosts = newsRepository.findByGamerId(gamerId);
+
+        if (newsPosts.isEmpty()) {
+            System.out.println("❌ 해당 유저가 작성한 글이 없습니다.");
+        } else {
+            System.out.println("✅ " + gamerId + " 사용자의 게시글 개수: " + newsPosts.size());
+        }
+
+        return newsPosts.stream()
+                .map(this::entityToDTO)
+                .collect(Collectors.toList());
+    }*/
 }

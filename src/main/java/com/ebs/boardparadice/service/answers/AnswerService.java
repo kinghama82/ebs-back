@@ -1,7 +1,10 @@
 package com.ebs.boardparadice.service.answers;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -176,6 +179,60 @@ public class AnswerService {
             default:
                 throw new IllegalArgumentException("잘못된 게시판 타입: " + boardType);
         }
+    }
+
+
+    // ✅ 특정 사용자가 작성한 댓글을 모두 가져오기
+    public Map<String, List<AnswerDTO>> getCommentsByGamerId(int gamerId) {
+        return Map.of(
+                "free", freeAnswerRepository.findByGamerId(gamerId)
+                        .stream()
+                        .map(answer -> AnswerDTO.builder()
+                                .id(answer.getId())
+                                .content(answer.getContent())
+                                .gamer(answer.getGamer())
+                                .createdate(answer.getCreatedate())
+                                .voter(answer.getVoter())
+                                .free(answer.getFree().getId())  // 자유게시판 ID 저장
+                                .build())
+                        .collect(Collectors.toList()),
+
+                "question", questionAnswerRepository.findByGamerId(gamerId)
+                        .stream()
+                        .map(answer -> AnswerDTO.builder()
+                                .id(answer.getId())
+                                .content(answer.getContent())
+                                .gamer(answer.getGamer())
+                                .createdate(answer.getCreatedate())
+                                .voter(answer.getVoter())
+                                .question(answer.getQuestion().getId())  // 질문게시판 ID 저장
+                                .build())
+                        .collect(Collectors.toList()),
+
+                "rulebook", rulebookAnswerRepository.findByGamerId(gamerId)
+                        .stream()
+                        .map(answer -> AnswerDTO.builder()
+                                .id(answer.getId())
+                                .content(answer.getContent())
+                                .gamer(answer.getGamer())
+                                .createdate(answer.getCreatedate())
+                                .voter(answer.getVoter())
+                                .rulebook(answer.getRulebook().getId())  // 룰북게시판 ID 저장
+                                .build())
+                        .collect(Collectors.toList()),
+
+                "news", newsAnswerRepository.findByGamerId(gamerId)
+                        .stream()
+                        .map(answer -> AnswerDTO.builder()
+                                .id(answer.getId())
+                                .content(answer.getContent())
+                                .gamer(answer.getGamer())
+                                .createdate(answer.getCreatedate())
+                                .voter(answer.getVoter())
+                                .news(answer.getNews().getId())  // 뉴스게시판 ID 저장
+                                .build())
+                        .collect(Collectors.toList())
+        );
     }
 
 

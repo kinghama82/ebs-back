@@ -3,6 +3,7 @@ package com.ebs.boardparadice.repository.boards;
 import java.util.List;
 import java.util.Optional;
 
+import com.ebs.boardparadice.model.boards.Free;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,8 @@ public interface RulebookRepository extends JpaRepository<Rulebook, Integer> {
       // 룰북 게시글 상세 조회 (댓글 포함)
       @Query("SELECT r FROM Rulebook r LEFT JOIN FETCH r.answerList a LEFT JOIN FETCH a.gamer WHERE r.id = :id")
       Optional<Rulebook> findByIdWithAnswers(@Param("id") int id);
-      
+
+      @Query("SELECT f FROM Free f WHERE f.gamer.id = :gamerId ORDER BY f.createdate DESC")
+      List<Free> findByGamerId(@Param("gamerId") int gamerId);
 }
 

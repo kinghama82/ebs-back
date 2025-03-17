@@ -272,7 +272,19 @@ public class FreeService {
 	    return freeDTO;
 	}
 
+	public List<FreeDTO> getPostsByGamerId(int gamerId) {
+		List<Free> freePosts = freeRepository.findByGamerId(gamerId);
+
+		if (freePosts.isEmpty()) {
+			System.out.println("❌ 해당 유저가 작성한 글이 없습니다.");
+		} else {
+			System.out.println("✅ " + gamerId + " 사용자의 게시글 개수: " + freePosts.size());
+		}
+
+		return freePosts.stream()
+				.map(this::entityToDTO)
+				.collect(Collectors.toList());
+	}
 
 
-   
 }

@@ -9,4 +9,5 @@ import java.util.List;
 public interface RulebookAnswerRepository extends JpaRepository<RulebookAnswer, Integer> {
 
     List<RulebookAnswer> findByRulebookId(int rulebookId);
+    List<RulebookAnswer> findByGamerId(int gamerId);
 }

@@ -56,7 +56,12 @@ public class CustomSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://43.202.30.85:3000")); // ✅ 특정 오리진 지정
+        configuration.setAllowedOriginPatterns(List.of(
+                "http://localhost:3000",
+                "http://43.202.30.85:3000",
+                "http://boardparadice.com",
+                "https://boardparadice.com" // 필요에 따라 추가
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true); // ✅ 반드시 true 설정
