@@ -146,7 +146,7 @@ public class NewsService {
 		                    .gamer(answer.getGamer())
 		                    .createdate(answer.getCreatedate())
 		                    .voter(answer.getVoter())
-		                    .free(answer.getNews().getId())
+		                    .news(answer.getNews().getId())
 		                    .build())
 		            .collect(Collectors.toList())
 		    );
@@ -155,7 +155,7 @@ public class NewsService {
 	   }
 	   
 	   //삭제
-	   public void deleteFree(int id) {
+	   public void deleteNews(int id) {
 		   newsRepository.deleteById(id);
 	   }
 
@@ -238,7 +238,7 @@ public class NewsService {
 			                        .gamer(answer.getGamer())
 			                        .createdate(answer.getCreatedate())
 			                        .voter(answer.getVoter())
-			                        .free(answer.getNews().getId())  // ✅ 자유게시판이므로 `free` 필드 사용
+			                        .news(answer.getNews().getId())  // ✅ 자유게시판이므로 `free` 필드 사용
 			                        .build())
 			                    .collect(Collectors.toList())
 			                : new ArrayList<>())  // ✅ `answerList`가 없으면 빈 리스트 반환

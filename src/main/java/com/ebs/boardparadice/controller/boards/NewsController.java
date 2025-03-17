@@ -122,7 +122,7 @@ public class NewsController {
  	// 삭제
  	@DeleteMapping("/{id}")
  	public Map<String, String> delete(@PathVariable(name = "id") int id) {
- 		newsService.deleteFree(id);
+ 		newsService.deleteNews(id);
  		return Map.of("result", "삭제 성공");
  	}
  	
