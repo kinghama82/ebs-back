@@ -1,7 +1,8 @@
 package com.ebs.boardparadice.controller;
 
-import com.ebs.boardparadice.DTO.GamerDTO;
+import com.ebs.boardparadice.DTO.*;
 import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.service.EmailService;
 import com.ebs.boardparadice.service.GamerService;
 import com.ebs.boardparadice.util.CustomJWTException;
 import com.ebs.boardparadice.util.JWTUtil;
@@ -9,11 +10,15 @@ import com.ebs.boardparadice.validation.GamerCreateForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +30,10 @@ import java.util.stream.Collectors;
 public class GamerController {
 
     private final GamerService gamerService;
+    private final EmailService emailService;
 
+    @Value("${upload.path}")
+    private String baseUploadPath;
 
     /**
      * 회원가입 (비밀번호 확인, 이메일/닉네임 중복 체크)
@@ -82,7 +90,30 @@ public class GamerController {
      * - 업로드 후 DB의 profileImage 경로 업데이트
      */
     @PostMapping("/uploadProfile")
-    public ResponseEntity<?> uploadProfileImage(@RequestParam(name = "email") String email,
+    public ResponseEntity<?> uploadProfileImage(
+            @RequestParam("email") String email,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            // 프로필 사진 저장 (helper 메서드)
+            String imagePath = saveProfileImage(file);
+
+            // 프로필 이미지 경로를 DB에 업데이트하는 로직 호출 (예: gamerService.updateProfileImage)
+            Gamer updatedGamer = gamerService.updateProfileImage(email, file);
+
+            return ResponseEntity.ok(Map.of(
+                    "msg", "프로필 이미지가 성공적으로 업데이트되었습니다.",
+                    "profileImage", updatedGamer.getProfileImage()
+            ));
+        } catch (Exception e) {
+            log.error("프로필 이미지 업로드 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "프로필 이미지 업데이트 실패: " + e.getMessage()));
+        }
+    }
+
+
+
+    /*public ResponseEntity<?> uploadProfileImage(@RequestParam(name = "email") String email,
                                                 @RequestParam(name = "file") MultipartFile file) {
         try {
             Gamer updatedGamer = gamerService.updateProfileImage(email, file);
@@ -94,7 +125,7 @@ public class GamerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "프로필 이미지 업데이트 실패: " + e.getMessage()));
         }
-    }
+    }*/
 
 //    기존코드
     /*@PostMapping("/uploadProfile")
@@ -288,4 +319,111 @@ public class GamerController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(result);
     }
+
+    // 비밀번호 변경
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        try {
+            Gamer updatedGamer = gamerService.changePassword(
+                    request.getEmail(),
+                    request.getCurrentPassword(),
+                    request.getNewPassword(),
+                    request.getConfirmPassword()
+            );
+            return ResponseEntity.ok(Map.of("msg", "비밀번호가 성공적으로 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("msg", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("msg", "비밀번호 변경에 실패하였습니다."));
+        }
+    }
+
+
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findId(@Valid @RequestBody FindIdRequest request) {
+        // 이름과 전화번호로 회원 조회
+        Optional<Gamer> optionalGamer = gamerService.findByNameAndPhone(request.getName(), request.getPhone());
+        if (optionalGamer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("msg", "일치하는 회원 정보를 찾을 수 없습니다."));
+        }
+        Gamer gamer = optionalGamer.get();
+
+        // 이메일 정보를 직접 응답에 포함시켜 반환
+        return ResponseEntity.ok(Map.of("msg", "당신의 아이디는 :", "email", gamer.getEmail()));
+    }
+
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequest request) {
+        // 이메일로 회원 조회 후 이름이 일치하는지 확인 (이름과 이메일로 식별)
+        Optional<Gamer> optionalGamer = gamerService.getGamerByEmail(request.getEmail());
+        if (optionalGamer.isEmpty() ||
+                !optionalGamer.get().getName().equalsIgnoreCase(request.getName())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("msg", "입력하신 정보와 일치하는 회원을 찾을 수 없습니다."));
+        }
+        Gamer gamer = optionalGamer.get();
+
+        // 비밀번호 재설정 토큰 생성 및 저장
+        String token = gamerService.createPasswordResetToken(gamer.getEmail());
+
+        // 프론트엔드의 비밀번호 재설정 페이지 URL (토큰을 파라미터로 전달)
+        String resetUrl = "http://localhost:3000/reset-password?token=" + token;
+        String subject = "비밀번호 재설정 요청";
+        String content = "안녕하세요, " + gamer.getName() + "님.\n\n"
+                + "입력하신 정보와 일치하는 회원이 확인되었습니다.\n"
+                + "아래 링크를 클릭하여 비밀번호를 재설정해주세요:\n" + resetUrl + "\n\n"
+                + "만약 본인이 요청하지 않으셨다면 이 이메일을 무시하세요.";
+
+        // 이메일 전송 (EmailService를 통해)
+        emailService.sendSimpleMessage(gamer.getEmail(), subject, content);
+
+        return ResponseEntity.ok(Map.of("msg", "비밀번호 재설정 링크가 해당 이메일로 전송되었습니다."));
+    }
+
+
+    // GamerController.java - 비밀번호 재설정 엔드포인트
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordDTO dto) {
+        try {
+            Gamer updatedGamer = gamerService.resetPassword(dto.getToken(), dto.getNewPassword(), dto.getConfirmPassword());
+            return ResponseEntity.ok(Map.of("msg", "비밀번호가 성공적으로 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("msg", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("msg", "비밀번호 재설정에 실패하였습니다."));
+        }
+    }
+
+    private String saveProfileImage(MultipartFile imgFile) throws Exception {
+        // 운영 환경: baseUploadPath는 "/home/ubuntu/uploads"가 됨.
+        Path uploadPath = Paths.get(baseUploadPath, "profile");
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+            System.out.println("✅ 프로필 업로드 디렉토리 생성됨: " + uploadPath.toString());
+        }
+
+        String originalFileName = imgFile.getOriginalFilename();
+        String fileName = UUID.randomUUID().toString() + "_" + originalFileName.replaceAll("\\s+", "");
+        Path filePath = uploadPath.resolve(fileName);
+        System.out.println("🟢 프로필 파일 저장 시도 중: " + filePath.toString());
+
+        try {
+            Files.copy(imgFile.getInputStream(), filePath);
+            System.out.println("✅ 프로필 파일 저장 완료: " + filePath.toString());
+        } catch (Exception e) {
+            System.err.println("🚨 프로필 파일 저장 오류: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+
+        // 웹 접근 경로 반환 (WebConfig와 일치)
+        return "/uploads/profile/" + fileName;
+    }
+
 }

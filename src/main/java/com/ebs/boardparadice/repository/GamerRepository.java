@@ -21,9 +21,10 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
     @Query("select g from Gamer g where g.email = :email")
     Optional<Gamer> getWithRoles(@Param("email") String email);
 
-    // GamerRepository.java
     @Query("SELECT g FROM Gamer g WHERE LOWER(g.nickname) LIKE LOWER(CONCAT('%', :nickname, '%'))")
     List<Gamer> searchByNickname(@Param("nickname") String nickname);
+
+    Optional<Gamer> findByNameAndPhone(String name, String phone);
 
 
 }

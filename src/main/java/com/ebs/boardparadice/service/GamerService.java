@@ -16,10 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +29,8 @@ public class GamerService {
 
     // 📂 업로드 디렉토리 경로 (절대 경로 사용 가능)
     private static final String UPLOAD_DIR = "src/main/resources/static/uploads/profile/";
+    // 메모리 기반 비밀번호 재설정 토큰 저장소 (실제 서비스에서는 만료 시간과 보안을 고려해야 함)
+    private Map<String, String> passwordResetTokens = new ConcurrentHashMap<>();
 
     // 회원가입: 비밀번호 암호화, 기본 역할 부여 후 저장
     public Gamer registerGamer(GamerDTO gamerDTO) {
@@ -143,4 +143,68 @@ public class GamerService {
     public List<Gamer> searchGamersByNickname(String nickname) {
         return gamerRepository.searchByNickname(nickname);
     }
+
+//    비밀번호 변경
+    @Transactional
+    public Gamer changePassword(String email, String currentPassword, String newPassword, String confirmPassword) {
+        Gamer gamer = gamerRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
+
+        // 현재 비밀번호 검증
+        if (!passwordEncoder.matches(currentPassword, gamer.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호와 확인 비밀번호 일치 검증
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호 암호화 후 업데이트
+        gamer.setPassword(passwordEncoder.encode(newPassword));
+        return gamerRepository.save(gamer);
+    }
+
+    public Optional<Gamer> findByNameAndPhone (String name, String phone) {
+        return gamerRepository.findByNameAndPhone(name, phone);
+    }
+
+    public String createPasswordResetToken(String email) {
+        // 사용자 확인 후 토큰 생성 (예: UUID 사용)
+        String token = UUID.randomUUID().toString();
+        // 토큰과 이메일을 저장 (토큰을 key로 하고, 이메일을 value로 저장)
+        passwordResetTokens.put(token, email);
+        return token;
+    }
+
+
+    @Transactional
+    public Gamer resetPassword(String token, String newPassword, String confirmPassword) {
+        // 토큰 유효성 확인 (토큰이 DB나 캐시에 있는지, 만료되지 않았는지 확인)
+        // 예시: String email = passwordResetTokens.get(token);
+        String email = validateAndRetrieveEmailFromToken(token); // 직접 구현 필요
+        if (email == null) {
+            throw new IllegalArgumentException("유효하지 않거나 만료된 토큰입니다.");
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+        }
+        Gamer gamer = gamerRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 회원을 찾을 수 없습니다."));
+        gamer.setPassword(passwordEncoder.encode(newPassword));
+        // 토큰 사용 완료 후 삭제 처리
+        removePasswordResetToken(token);
+        return gamerRepository.save(gamer);
+    }
+
+    // 토큰의 유효성을 검사하고 해당 이메일을 반환 (유효하지 않으면 null)
+    private String validateAndRetrieveEmailFromToken(String token) {
+        return passwordResetTokens.get(token);
+    }
+
+    // 사용 완료된 토큰 삭제
+    private void removePasswordResetToken(String token) {
+        passwordResetTokens.remove(token);
+    }
+
 }
