@@ -58,3 +58,4 @@ jobs:
 
             echo "Checking logs..."
             tail -n 50 /home/ubuntu/app.log || echo "Log file not found"
+            
