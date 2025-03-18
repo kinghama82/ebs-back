@@ -27,14 +27,14 @@ jobs:
         run: ./gradlew clean build -x test  # 테스트 제외하고 빌드
 
       - name: Copy Jar to EC2
-        uses: appleboy/scp-action@v0.1.6  # ✅ 파일 전송은 scp-action 사용
+        uses: appleboy/scp-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           port: 22
-          source: "build/libs/boardparadice-0.0.3-SNAPSHOT.jar"
-          target: "/home/ubuntu/"
+          source: "build/libs/boardparadice-0.0.4-SNAPSHOT.jar"
+          target: "/home/ubuntu/boardparadice-0.0.4-SNAPSHOT.jar"
 
       - name: Restart Application on EC2
         uses: appleboy/ssh-action@v1.2.2
