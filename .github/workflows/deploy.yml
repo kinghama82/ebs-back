@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    timeout-minutes: 10
+    timeout-minutes: 15  # ⏳ 실행 시간 확보
     runs-on: ubuntu-latest
 
     steps:
@@ -27,14 +27,16 @@ jobs:
         run: ./gradlew clean build -x test  # 테스트 제외하고 빌드
 
       - name: Copy Jar to EC2
-        uses: appleboy/ssh-action@v1.2.2
+        uses: appleboy/scp-action@v0.1.6  # ✅ 파일 전송은 scp-action 사용
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           port: 22
+          source: "build/libs/boardparadice-0.0.3-SNAPSHOT.jar"
+          target: "/home/ubuntu/"
 
-      - name: Restart Application on EC2a
+      - name: Restart Application on EC2
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -42,8 +44,16 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
+            echo "Stopping existing application..."
             pkill -f 'boardparadice-0.0.3-SNAPSHOT.jar' || echo "No process found"
-            nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > ~/app/logs.out 2>&1 &
-            disown
-            sleep 10  # 로그 파일이 생성될 시간을 줌
-            tail -n 50 ~/app/logs.out || echo "Log file not found"
+
+            echo "Starting new application..."
+            nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > /home/ubuntu/app.log 2>&1 &
+            echo $! > /home/ubuntu/app.pid  # ✅ PID 저장
+
+            sleep 10  # ✅ 충분한 시간 대기
+            echo "Checking running processes..."
+            ps -ef | grep 'boardparadice' | grep -v grep  # ✅ 실행 확인
+
+            echo "Checking logs..."
+            tail -n 50 /home/ubuntu/app.log || echo "Log file not found"
