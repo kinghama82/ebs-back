@@ -33,10 +33,10 @@ public class RulebookAnswerController {
             @PathVariable int rulebookId,
             @RequestBody Map<String, String> requestBody) {
 
-        int writerId = Integer.parseInt(requestBody.get("writerId"));
+        int gamerId = Integer.parseInt(requestBody.get("gamerId"));
         String content = requestBody.get("content");
 
-        RulebookAnswerDTO createdAnswer = answerService.addAnswer(rulebookId, writerId, content);
+        RulebookAnswerDTO createdAnswer = answerService.addAnswer(rulebookId, gamerId, content);
         return ResponseEntity.ok(createdAnswer);
     }
 

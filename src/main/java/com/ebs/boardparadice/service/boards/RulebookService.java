@@ -57,7 +57,7 @@ public class RulebookService {
                 .build();
     }
 
-    // 작성 (이미지 업로드와 함께)
+/*    // 작성 (이미지 업로드와 함께)
     public Integer createRulebook(RulebookDTO rulebookDTO) {
         Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
 
@@ -68,7 +68,7 @@ public class RulebookService {
 
         Rulebook savedRulebook = rulebookRepository.save(rulebook);
         return savedRulebook.getId();
-    }
+    }*/
 
     // 상세보기
     public RulebookDTO getRulebook(Integer id) {

@@ -22,10 +22,6 @@ public class AnswerController {
 
     private final AnswerService answerService;
 
-    
-    
-    
-    
 //    dsfalkjfaslkfsa
         
     //저장
