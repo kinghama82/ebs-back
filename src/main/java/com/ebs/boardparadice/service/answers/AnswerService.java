@@ -74,19 +74,19 @@ public class AnswerService {
                 questionAnswerRepository.save(questionAnswer);
                 return entityToDto(questionAnswer, boardType);
             //룰북
-            case "rulebook":
+        /*    case "rulebook":
                 Rulebook rulebook = rulebookRepository.findById(answerDTO.getRulebook())
                         .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
                 RulebookAnswer rulebookAnswer = RulebookAnswer.builder()
                         .content(answerDTO.getContent())
-                        .gamer(answerDTO.getGamer())
+                        .writer(answerDTO.getGamer())
                         .createdate(LocalDateTime.now())
                         .voter(answerDTO.getVoter())
                         .rulebook(rulebook)
                         .build();
                 rulebookAnswerRepository.save(rulebookAnswer);
-                return entityToDto(rulebookAnswer, boardType);
-            //뉴스
+                return entityToDto(rulebookAnswer, boardType);*/
+            //뉴스*/
             case "news":
                 News news = newsRepository.findById(answerDTO.getNews())
                         .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
@@ -115,9 +115,9 @@ public class AnswerService {
             case "question":
                 questionAnswerRepository.deleteById(id);
                 break;
-            case "rulebook":
+         /*   case "rulebook":
                 rulebookAnswerRepository.deleteById(id);
-                break;
+                break;*/
             case "news":
                 newsAnswerRepository.deleteById(id);
                 break;
@@ -154,16 +154,16 @@ public class AnswerService {
                         .question(questionAnswer.getQuestion().getId())
                         .build();
             //룰북
-            case "rulebook":
+         /*   case "rulebook":
                 RulebookAnswer rulebookAnswer = (RulebookAnswer) answer;
                 return dtoBuilder
                         .id(rulebookAnswer.getId())
                         .content(rulebookAnswer.getContent())
-                        .gamer(rulebookAnswer.getGamer())
+                        .gamer(rulebookAnswer.getWriter())
                         .createdate(rulebookAnswer.getCreatedate())
                         .voter(rulebookAnswer.getVoter())
                         .rulebook(rulebookAnswer.getRulebook().getId())
-                        .build();
+                        .build();*/
             //뉴스
             case "news":
                 NewsAnswer newsAnswer = (NewsAnswer) answer;
@@ -209,18 +209,18 @@ public class AnswerService {
                                 .build())
                         .collect(Collectors.toList()),
 
-                "rulebook", rulebookAnswerRepository.findByGamerId(gamerId)
+             /*  "rulebook", rulebookAnswerRepository.findByGamerId(gamerId)
                         .stream()
                         .map(answer -> AnswerDTO.builder()
                                 .id(answer.getId())
                                 .content(answer.getContent())
-                                .gamer(answer.getGamer())
+                                .gamer(answer.getWriter())
                                 .createdate(answer.getCreatedate())
                                 .voter(answer.getVoter())
                                 .rulebook(answer.getRulebook().getId())  // 룰북게시판 ID 저장
                                 .build())
                         .collect(Collectors.toList()),
-
+*/
                 "news", newsAnswerRepository.findByGamerId(gamerId)
                         .stream()
                         .map(answer -> AnswerDTO.builder()

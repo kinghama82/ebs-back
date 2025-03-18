@@ -41,15 +41,15 @@ public class RulebookAnswerService {
     /**
      * 답글 추가
      */
-    public RulebookAnswerDTO addAnswer(int rulebookId, int writerId, String content) {
+    public RulebookAnswerDTO addAnswer(int rulebookId, int gamerId, String content) {
         Rulebook rulebook = rulebookRepository.findById(rulebookId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        Gamer writer = gamerRepository.findById(writerId)
+        Gamer gamer = gamerRepository.findById(gamerId)
                 .orElseThrow(() -> new RuntimeException("작성자를 찾을 수 없습니다."));
 
         RulebookAnswer answer = new RulebookAnswer();
         answer.setRulebook(rulebook);
-        answer.setGamer(writer);
+        answer.setGamer(gamer);
         answer.setContent(content);
         answer.setCreatedate(LocalDateTime.now());
 
