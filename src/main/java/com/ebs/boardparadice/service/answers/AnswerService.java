@@ -48,7 +48,7 @@ public class AnswerService {
     public AnswerDTO saveAnswer(String boardType, AnswerDTO answerDTO) {
         switch (boardType) {
             //자유
-        	case "free":
+            case "free":
                 Free free = freeRepository.findById(answerDTO.getFree())
                         .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
                 FreeAnswer freeAnswer = FreeAnswer.builder()
@@ -86,7 +86,7 @@ public class AnswerService {
                         .build();
                 rulebookAnswerRepository.save(rulebookAnswer);
                 return entityToDto(rulebookAnswer, boardType);
-            //뉴스    
+            //뉴스
             case "news":
                 News news = newsRepository.findById(answerDTO.getNews())
                         .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
@@ -103,7 +103,7 @@ public class AnswerService {
             default:
                 throw new IllegalArgumentException("잘못된 게시판 타입");
         }
-    }   
+    }
 
     //삭제
     @Transactional
@@ -126,55 +126,55 @@ public class AnswerService {
         }
     }
 
-    // 엔티티 -> DTO 
+    // 엔티티 -> DTO
     private AnswerDTO entityToDto(Object answer, String boardType) {
         AnswerDTO.AnswerDTOBuilder dtoBuilder = AnswerDTO.builder();
 
         switch (boardType) {
-        	//자유
+            //자유
             case "free":
                 FreeAnswer freeAnswer = (FreeAnswer) answer;
                 return dtoBuilder
-                    .id(freeAnswer.getId())
-                    .content(freeAnswer.getContent())
-                    .gamer(freeAnswer.getGamer())
-                    .createdate(freeAnswer.getCreatedate())
-                    .voter(freeAnswer.getVoter())
-                    .free(freeAnswer.getFree().getId())  
-                    .build();
+                        .id(freeAnswer.getId())
+                        .content(freeAnswer.getContent())
+                        .gamer(freeAnswer.getGamer())
+                        .createdate(freeAnswer.getCreatedate())
+                        .voter(freeAnswer.getVoter())
+                        .free(freeAnswer.getFree().getId())
+                        .build();
             //질문
             case "question":
                 QuestionAnswer questionAnswer = (QuestionAnswer) answer;
                 return dtoBuilder
-                    .id(questionAnswer.getId())
-                    .content(questionAnswer.getContent())
-                    .gamer(questionAnswer.getGamer())
-                    .createdate(questionAnswer.getCreatedate())
-                    .voter(questionAnswer.getVoter())
-                    .question(questionAnswer.getQuestion().getId())  
-                    .build();
-            //룰북    
+                        .id(questionAnswer.getId())
+                        .content(questionAnswer.getContent())
+                        .gamer(questionAnswer.getGamer())
+                        .createdate(questionAnswer.getCreatedate())
+                        .voter(questionAnswer.getVoter())
+                        .question(questionAnswer.getQuestion().getId())
+                        .build();
+            //룰북
             case "rulebook":
                 RulebookAnswer rulebookAnswer = (RulebookAnswer) answer;
                 return dtoBuilder
-                    .id(rulebookAnswer.getId())
-                    .content(rulebookAnswer.getContent())
-                    .gamer(rulebookAnswer.getGamer())
-                    .createdate(rulebookAnswer.getCreatedate())
-                    .voter(rulebookAnswer.getVoter())
-                    .rulebook(rulebookAnswer.getRulebook().getId())  
-                    .build();
-            //뉴스    
+                        .id(rulebookAnswer.getId())
+                        .content(rulebookAnswer.getContent())
+                        .gamer(rulebookAnswer.getGamer())
+                        .createdate(rulebookAnswer.getCreatedate())
+                        .voter(rulebookAnswer.getVoter())
+                        .rulebook(rulebookAnswer.getRulebook().getId())
+                        .build();
+            //뉴스
             case "news":
                 NewsAnswer newsAnswer = (NewsAnswer) answer;
                 return dtoBuilder
-                    .id(newsAnswer.getId())
-                    .content(newsAnswer.getContent())
-                    .gamer(newsAnswer.getGamer())
-                    .createdate(newsAnswer.getCreatedate())
-                    .voter(newsAnswer.getVoter())
-                    .news(newsAnswer.getNews().getId())  
-                    .build();
+                        .id(newsAnswer.getId())
+                        .content(newsAnswer.getContent())
+                        .gamer(newsAnswer.getGamer())
+                        .createdate(newsAnswer.getCreatedate())
+                        .voter(newsAnswer.getVoter())
+                        .news(newsAnswer.getNews().getId())
+                        .build();
 
             default:
                 throw new IllegalArgumentException("잘못된 게시판 타입: " + boardType);
@@ -237,5 +237,4 @@ public class AnswerService {
 
 
 
-    }
-
+}
