@@ -202,4 +202,9 @@ public class GamerService {
         passwordResetTokens.remove(token);
     }
 
+    public Optional<Gamer> getGamerByPhone(String phone) {
+        return gamerRepository.findByPhone(phone);
+    }
+
+
 }

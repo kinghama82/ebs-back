@@ -379,6 +379,11 @@ public class GamerController {
         return ResponseEntity.ok(Map.of("msg", "비밀번호 재설정 링크가 해당 이메일로 전송되었습니다."));
     }
 
+    @GetMapping("/check-phone")
+    public ResponseEntity<Map<String, Boolean>> checkPhoneExists(@RequestParam String phone) {
+        boolean exists = gamerService.getGamerByPhone(phone).isPresent();
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
 
     // GamerController.java - 비밀번호 재설정 엔드포인트
     @PutMapping("/reset-password")

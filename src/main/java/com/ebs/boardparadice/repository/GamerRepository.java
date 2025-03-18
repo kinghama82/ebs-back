@@ -26,6 +26,7 @@ public interface GamerRepository extends JpaRepository<Gamer, Integer> {
 
     Optional<Gamer> findByNameAndPhone(String name, String phone);
 
-
+    // 핸드폰 번호로 조회하는 메서드 추가
+    Optional<Gamer> findByPhone(String phone);
 }
 
