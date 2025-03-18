@@ -10,7 +10,6 @@ import com.ebs.boardparadice.validation.GamerCreateForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import com.ebs.boardparadice.config.WebConfig;
+
 
 @RestController
 @RequestMapping("/api/gamer")
@@ -31,7 +32,6 @@ public class GamerController {
 
     private final GamerService gamerService;
     private final EmailService emailService;
-
 
     /**
      * 회원가입 (비밀번호 확인, 이메일/닉네임 중복 체크)
@@ -397,7 +397,7 @@ public class GamerController {
 
     private String saveProfileImage(MultipartFile imgFile) throws Exception {
         // 운영 환경: baseUploadPath는 "/home/ubuntu/uploads"가 됨.
-        Path uploadPath = Paths.get(baseUploadPath, "profile");
+        Path uploadPath = Paths.get(WebConfig.UPLOAD_BASE_PATH, "profile");
 
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
