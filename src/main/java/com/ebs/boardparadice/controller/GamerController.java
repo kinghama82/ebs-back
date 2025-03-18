@@ -366,7 +366,7 @@ public class GamerController {
         String token = gamerService.createPasswordResetToken(gamer.getEmail());
 
         // 프론트엔드의 비밀번호 재설정 페이지 URL (토큰을 파라미터로 전달)
-        String resetUrl = "https://boardparadice/reset-password?token=" + token;
+        String resetUrl = "https://boardparadice.com/reset-password?token=" + token;
         String subject = "비밀번호 재설정 요청";
         String content = "안녕하세요, " + gamer.getName() + "님.\n\n"
                 + "입력하신 정보와 일치하는 회원이 확인되었습니다.\n"
