@@ -30,10 +30,10 @@ public class GameController {
      * 게임 등록 (파일 업로드 지원)
      * multipart/form-data 형식으로, "game" 파트에는 JSON 문자열, "img" 파트에는 이미지 파일을 포함.
      */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/create")  // ✅ 경로 변경: POST /api/games/create
     public ResponseEntity<GameDTO> createGame(
-            @RequestPart("game") String gameJson,  // JSON 형식의 게임 데이터를 문자열로 받음
-            @RequestPart(value = "img", required = false) MultipartFile imgFile) { // 이미지 파일을 선택적으로 받음
+            @RequestPart("game") String gameJson,
+            @RequestPart(value = "img", required = false) MultipartFile imgFile) {// 이미지 파일을 선택적으로 받음
 
         try {
             // JSON 데이터를 GameRequestDTO 객체로 변환
