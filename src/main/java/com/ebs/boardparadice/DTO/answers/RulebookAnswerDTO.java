@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class RulebookAnswerDTO {
     private int id;
     private Rulebook rulebook;
-    private Gamer writer;
+    private Gamer gamer;
     private String content;
     private LocalDateTime createDate;
     private String nickname;
