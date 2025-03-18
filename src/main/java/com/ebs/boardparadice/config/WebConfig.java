@@ -19,3 +19,4 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + UPLOAD_BASE_PATH);
     }
 }
+

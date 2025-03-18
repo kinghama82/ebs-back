@@ -14,10 +14,11 @@ import java.util.UUID;
 @RequestMapping("/api/upload")
 public class FileUploadController {
 
-    // WebConfig에 따라 외부 경로로 저장 (예: /home/ubuntu/uploads/news/)
-    private static final String UPLOAD_DIR = "/home/ubuntu/uploads/news/";
-    // BASE_URL은 실제 외부 도메인이나 IP로 변경하세요.
-    private static final String BASE_URL = "http://43.202.30.85";
+    // 파일이 저장될 경로 (NewsController에서 사용한 경로와 동일)
+    private static final String UPLOAD_DIR = "D:/ebs-back/src/main/resources/static/uploads/news/";
+
+    // 업로드 후 클라이언트가 접근할 수 있는 절대 URL을 생성합니다.
+    private static final String BASE_URL = "http://localhost:8080"; // 필요한 경우 도메인 변경
 
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -31,7 +32,7 @@ public class FileUploadController {
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), filePath);
 
-            // 클라이언트가 접근 가능한 URL 생성
+            // 절대 URL 생성
             String imageUrl = BASE_URL + "/uploads/news/" + fileName;
             return ResponseEntity.ok().body(Map.of("imageUrl", imageUrl));
         } catch (Exception e) {

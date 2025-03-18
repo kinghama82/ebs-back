@@ -1,7 +1,6 @@
 package com.ebs.boardparadice.controller;
 
 import com.ebs.boardparadice.DTO.*;
-import com.ebs.boardparadice.config.WebConfig;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.service.EmailService;
 import com.ebs.boardparadice.service.GamerService;
@@ -11,6 +10,7 @@ import com.ebs.boardparadice.validation.GamerCreateForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +32,8 @@ public class GamerController {
     private final GamerService gamerService;
     private final EmailService emailService;
 
-    // WebConfig.UPLOAD_BASE_PATH를 사용 (로컬/서버 전환은 WebConfig에서만 변경)
-    private static final String baseUploadPath = WebConfig.UPLOAD_BASE_PATH;
+    @Value("${upload.path}")
+    private String baseUploadPath;
 
     /**
      * 회원가입 (비밀번호 확인, 이메일/닉네임 중복 체크)
@@ -94,10 +94,11 @@ public class GamerController {
             @RequestParam("email") String email,
             @RequestParam("file") MultipartFile file) {
         try {
-            // 프로필 이미지 저장: saveProfileImage는 WebConfig에 정의된 경로를 사용합니다.
+            // 프로필 사진 저장 (helper 메서드)
             String imagePath = saveProfileImage(file);
-            // 저장된 이미지 URL을 사용해 DB 업데이트 (GamerService의 updateProfileImage 메서드는 (email, imagePath) 시그니처로 수정되어야 합니다.)
-            Gamer updatedGamer = gamerService.updateProfileImage(email, imagePath);
+
+            // 프로필 이미지 경로를 DB에 업데이트하는 로직 호출 (예: gamerService.updateProfileImage)
+            Gamer updatedGamer = gamerService.updateProfileImage(email, file);
 
             return ResponseEntity.ok(Map.of(
                     "msg", "프로필 이미지가 성공적으로 업데이트되었습니다.",
@@ -109,6 +110,9 @@ public class GamerController {
                     .body(Map.of("error", "프로필 이미지 업데이트 실패: " + e.getMessage()));
         }
     }
+
+
+
     /*public ResponseEntity<?> uploadProfileImage(@RequestParam(name = "email") String email,
                                                 @RequestParam(name = "file") MultipartFile file) {
         try {
@@ -316,6 +320,26 @@ public class GamerController {
         return ResponseEntity.ok(result);
     }
 
+    // 비밀번호 변경
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        try {
+            Gamer updatedGamer = gamerService.changePassword(
+                    request.getEmail(),
+                    request.getCurrentPassword(),
+                    request.getNewPassword(),
+                    request.getConfirmPassword()
+            );
+            return ResponseEntity.ok(Map.of("msg", "비밀번호가 성공적으로 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("msg", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("msg", "비밀번호 변경에 실패하였습니다."));
+        }
+    }
+
 
     @PostMapping("/find-id")
     public ResponseEntity<?> findId(@Valid @RequestBody FindIdRequest request) {
@@ -375,18 +399,20 @@ public class GamerController {
         }
     }
 
-    // 프로필 이미지 저장 helper 메서드
     private String saveProfileImage(MultipartFile imgFile) throws Exception {
-        // 업로드 경로: WebConfig.UPLOAD_BASE_PATH/profile/
+        // 운영 환경: baseUploadPath는 "/home/ubuntu/uploads"가 됨.
         Path uploadPath = Paths.get(baseUploadPath, "profile");
+
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
             System.out.println("✅ 프로필 업로드 디렉토리 생성됨: " + uploadPath.toString());
         }
+
         String originalFileName = imgFile.getOriginalFilename();
         String fileName = UUID.randomUUID().toString() + "_" + originalFileName.replaceAll("\\s+", "");
         Path filePath = uploadPath.resolve(fileName);
         System.out.println("🟢 프로필 파일 저장 시도 중: " + filePath.toString());
+
         try {
             Files.copy(imgFile.getInputStream(), filePath);
             System.out.println("✅ 프로필 파일 저장 완료: " + filePath.toString());
@@ -395,7 +421,8 @@ public class GamerController {
             e.printStackTrace();
             throw e;
         }
-        // WebConfig에 따라 클라이언트가 접근 가능한 URL 반환
+
+        // 웹 접근 경로 반환 (WebConfig와 일치)
         return "/uploads/profile/" + fileName;
     }
 

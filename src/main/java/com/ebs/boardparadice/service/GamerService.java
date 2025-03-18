@@ -1,7 +1,6 @@
 package com.ebs.boardparadice.service;
 
 import com.ebs.boardparadice.DTO.GamerDTO;
-import com.ebs.boardparadice.config.WebConfig;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.GamerRole;
 import com.ebs.boardparadice.repository.GamerRepository;
@@ -29,7 +28,7 @@ public class GamerService {
     private final PasswordEncoder passwordEncoder;
 
     // 📂 업로드 디렉토리 경로 (절대 경로 사용 가능)
-    private static final String UPLOAD_DIR = WebConfig.UPLOAD_BASE_PATH + "profile/";
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/profile/";
     // 메모리 기반 비밀번호 재설정 토큰 저장소 (실제 서비스에서는 만료 시간과 보안을 고려해야 함)
     private Map<String, String> passwordResetTokens = new ConcurrentHashMap<>();
 
@@ -110,26 +109,34 @@ public class GamerService {
 
     // 프로필 이미지 업데이트 로직
     @Transactional
-    public Gamer updateProfileImage(String email, String imagePath) {
+    public Gamer updateProfileImage(String email, MultipartFile file) throws Exception {
         Gamer gamer = gamerRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다: " + email));
-        // 기존 프로필 이미지 삭제 (필요 시)
+
+        // 1️⃣ 기존 프로필 이미지 삭제
         if (gamer.getProfileImage() != null && !gamer.getProfileImage().isEmpty()) {
-            String existingFileName = gamer.getProfileImage().substring("/uploads/profile/".length());
-            Path existingFilePath = Paths.get(UPLOAD_DIR, existingFileName);
-            File existingFile = existingFilePath.toFile();
+            String existingFilePath = UPLOAD_DIR + gamer.getProfileImage().substring("/uploads/profile/".length());
+            Path path = Paths.get(existingFilePath);
+            File existingFile = path.toFile();
             if (existingFile.exists()) {
-                try {
-                    Files.delete(existingFilePath);
-                    System.out.println("✅ 기존 프로필 이미지 삭제됨: " + existingFilePath.toString());
-                } catch (Exception e) {
-                    System.err.println("🚨 기존 프로필 이미지 삭제 실패: " + e.getMessage());
-                }
+                Files.delete(path);
+                System.out.println("✅ 기존 프로필 이미지 삭제됨: " + existingFilePath);
             }
         }
 
-        // 새 이미지 경로 업데이트
-        gamer.setProfileImage(imagePath);
+        // 2️⃣ 새 이미지 저장
+        File uploadDir = new File(UPLOAD_DIR);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs(); // 디렉토리가 없으면 생성
+        }
+
+        String newFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path filePath = Paths.get(UPLOAD_DIR + newFileName);
+        Files.copy(file.getInputStream(), filePath);
+
+        // 3️⃣ 새 이미지 경로를 DB에 저장
+        String profileImageUrl = "/uploads/profile/" + newFileName;
+        gamer.setProfileImage(profileImageUrl);
         return gamerRepository.save(gamer);
     }
 
@@ -137,7 +144,7 @@ public class GamerService {
         return gamerRepository.searchByNickname(nickname);
     }
 
-//    비밀번호 변경
+    //    비밀번호 변경
     @Transactional
     public Gamer changePassword(String email, String currentPassword, String newPassword, String confirmPassword) {
         Gamer gamer = gamerRepository.findByEmail(email)
@@ -198,29 +205,6 @@ public class GamerService {
     // 사용 완료된 토큰 삭제
     private void removePasswordResetToken(String token) {
         passwordResetTokens.remove(token);
-    }
-
-    // 프로필 이미지 저장 helper 메서드
-    private String saveProfileImage(MultipartFile imgFile) throws Exception {
-        Path uploadPath = Paths.get(UPLOAD_DIR);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-            System.out.println("✅ 프로필 업로드 디렉토리 생성됨: " + uploadPath.toString());
-        }
-        String originalFileName = imgFile.getOriginalFilename();
-        String fileName = UUID.randomUUID().toString() + "_" + originalFileName.replaceAll("\\s+", "");
-        Path filePath = uploadPath.resolve(fileName);
-        System.out.println("🟢 프로필 파일 저장 시도 중: " + filePath.toString());
-        try {
-            Files.copy(imgFile.getInputStream(), filePath);
-            System.out.println("✅ 프로필 파일 저장 완료: " + filePath.toString());
-        } catch (Exception e) {
-            System.err.println("🚨 프로필 파일 저장 오류: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-        // WebConfig에 맞춰, 클라이언트가 접근할 수 있는 URL 반환
-        return "/uploads/profile/" + fileName;
     }
 
 }
