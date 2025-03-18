@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +27,7 @@ jobs:
         run: ./gradlew clean build -x test  # 테스트 제외하고 빌드
 
       - name: Copy Jar to EC2
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -36,13 +37,14 @@ jobs:
           target: "/home/ubuntu/"
 
       - name: Restart Application on EC2
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            pkill -f 'boardparadice-0.0.3-SNAPSHOT.jar'
-            nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > ~/app/logs.out 2>&1 &
-
+            pkill -f 'boardparadice-0.0.3-SNAPSHOT.jar' || echo "No process found"
+      nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > ~/app/logs.out 2>&1 &
+      sleep 5
+      tail -n 50 ~/app/logs.out  # 최근 로그 출력
