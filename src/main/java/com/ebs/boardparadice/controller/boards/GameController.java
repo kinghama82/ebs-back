@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import com.ebs.boardparadice.config.WebConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class GameController {
             // 업로드된 파일이 존재하는지 확인 후 처리
             if (imgFile != null && !imgFile.isEmpty()) {
                 System.out.println("📂 받은 파일: " + imgFile.getOriginalFilename()); // 파일명 출력
-                String imageUrl = saveImageFile(imgFile); // 파일 저장 후 URL 반환
+                String imageUrl = saveGameImageFile(imgFile); // 파일 저장 후 URL 반환
                 gameDTO.setImg(imageUrl); // DTO에 이미지 URL 설정
             } else {
                 System.out.println("⚠️ 파일이 없거나 비어 있음"); // 파일이 없을 경우 로그 출력
@@ -65,7 +66,40 @@ public class GameController {
      * 이미지 파일을 로컬에 저장하는 예시 메소드
      * 실제 운영환경에서는 파일명 중복, 경로 보안, 클라우드 스토리지 연동 등을 고려해야 합니다.
      */
-    private String saveImageFile(MultipartFile imgFile) throws Exception {
+    private String saveGameImageFile(MultipartFile imgFile) throws Exception {
+        // ✅ 업로드 디렉토리 설정
+        Path uploadPath = Paths.get(WebConfig.UPLOAD_BASE_PATH, "games");
+
+        // ✅ 디렉토리 없으면 생성
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+            System.out.println("✅ 게임 이미지 업로드 디렉토리 생성됨: " + uploadPath.toString());
+        }
+
+        // ✅ 원본 파일명에서 확장자 포함한 전체 이름 가져오기
+        String originalFileName = imgFile.getOriginalFilename();
+
+        // ✅ 파일명 중복 방지를 위한 UUID 추가
+        String fileName = UUID.randomUUID().toString() + "_" + originalFileName.replaceAll("\\s+", "");
+        Path filePath = uploadPath.resolve(fileName);
+        System.out.println("🟢 게임 이미지 파일 저장 시도 중: " + filePath.toString());
+
+        try {
+            Files.copy(imgFile.getInputStream(), filePath);
+            System.out.println("✅ 게임 이미지 파일 저장 완료: " + filePath.toString());
+        } catch (Exception e) {
+            System.err.println("🚨 게임 이미지 파일 저장 오류: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        }
+
+        // ✅ 프론트에서 접근할 수 있도록 "/uploads/games/파일명" 반환
+        return "/uploads/games/" + fileName;
+    }
+
+
+
+    /*private String saveImageFile(MultipartFile imgFile) throws Exception {
         // ✅ 프로젝트 루트 경로 기준으로 static/uploads/games 폴더 설정
         String projectDir = System.getProperty("user.dir");
         Path uploadPath = Paths.get(projectDir, "src", "main", "resources", "static", "uploads", "games");
@@ -96,7 +130,7 @@ public class GameController {
 
         // ✅ 저장된 파일의 경로를 반환 (웹에서 접근할 수 있도록 상대 경로 사용)
         return "/uploads/games/" + fileName;
-    }
+    }*/
 
     /**
      * 전체 게임 목록 조회 (GET /games)
