@@ -45,6 +45,9 @@ jobs:
           port: 22
           script: |
             pkill -f 'boardparadice-0.0.3-SNAPSHOT.jar' || echo "No process found"
-            nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > ~/app/logs.out 2>&1 &
+            nohup java -jar /home/***/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > ~/app/logs.out 2>&1 &
+            disown
             sleep 5
             tail -n 50 ~/app/logs.out  # 최근 로그 출력
+          command_timeout: 20m
+
