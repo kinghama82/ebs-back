@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import com.ebs.boardparadice.config.WebConfig;
+
 
 import java.io.File;
 import java.nio.file.Files;
@@ -107,36 +109,29 @@ public class GamerService {
         return gamerRepository.save(gamer);
     }
 
-    // 프로필 이미지 업데이트 로직
     @Transactional
-    public Gamer updateProfileImage(String email, MultipartFile file) throws Exception {
+    public Gamer updateProfileImage(String email, String imagePath) {
         Gamer gamer = gamerRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다: " + email));
 
-        // 1️⃣ 기존 프로필 이미지 삭제
+        // 기존 프로필 이미지 삭제 (필요 시)
         if (gamer.getProfileImage() != null && !gamer.getProfileImage().isEmpty()) {
-            String existingFilePath = UPLOAD_DIR + gamer.getProfileImage().substring("/uploads/profile/".length());
-            Path path = Paths.get(existingFilePath);
-            File existingFile = path.toFile();
+            String existingFileName = gamer.getProfileImage().substring("/uploads/profile/".length());
+            // WebConfig에 정의된 업로드 기본 경로를 사용
+            Path existingFilePath = Paths.get(WebConfig.UPLOAD_BASE_PATH, "profile", existingFileName);
+            File existingFile = existingFilePath.toFile();
             if (existingFile.exists()) {
-                Files.delete(path);
-                System.out.println("✅ 기존 프로필 이미지 삭제됨: " + existingFilePath);
+                try {
+                    Files.delete(existingFilePath);
+                    System.out.println("✅ 기존 프로필 이미지 삭제됨: " + existingFilePath.toString());
+                } catch (Exception e) {
+                    System.err.println("🚨 기존 프로필 이미지 삭제 실패: " + e.getMessage());
+                }
             }
         }
 
-        // 2️⃣ 새 이미지 저장
-        File uploadDir = new File(UPLOAD_DIR);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs(); // 디렉토리가 없으면 생성
-        }
-
-        String newFileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(UPLOAD_DIR + newFileName);
-        Files.copy(file.getInputStream(), filePath);
-
-        // 3️⃣ 새 이미지 경로를 DB에 저장
-        String profileImageUrl = "/uploads/profile/" + newFileName;
-        gamer.setProfileImage(profileImageUrl);
+        // 새 이미지 경로 업데이트
+        gamer.setProfileImage(imagePath);
         return gamerRepository.save(gamer);
     }
 

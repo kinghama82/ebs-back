@@ -32,8 +32,6 @@ public class GamerController {
     private final GamerService gamerService;
     private final EmailService emailService;
 
-    @Value("${upload.path}")
-    private String baseUploadPath;
 
     /**
      * 회원가입 (비밀번호 확인, 이메일/닉네임 중복 체크)
@@ -94,11 +92,11 @@ public class GamerController {
             @RequestParam("email") String email,
             @RequestParam("file") MultipartFile file) {
         try {
-            // 프로필 사진 저장 (helper 메서드)
+            // 프로필 사진 저장 (helper 메서드 호출)
             String imagePath = saveProfileImage(file);
 
-            // 프로필 이미지 경로를 DB에 업데이트하는 로직 호출 (예: gamerService.updateProfileImage)
-            Gamer updatedGamer = gamerService.updateProfileImage(email, file);
+            // 저장된 이미지 URL을 사용해 DB 업데이트 (서비스 메서드는 String을 기대함)
+            Gamer updatedGamer = gamerService.updateProfileImage(email, imagePath);
 
             return ResponseEntity.ok(Map.of(
                     "msg", "프로필 이미지가 성공적으로 업데이트되었습니다.",
@@ -110,8 +108,6 @@ public class GamerController {
                     .body(Map.of("error", "프로필 이미지 업데이트 실패: " + e.getMessage()));
         }
     }
-
-
 
     /*public ResponseEntity<?> uploadProfileImage(@RequestParam(name = "email") String email,
                                                 @RequestParam(name = "file") MultipartFile file) {
