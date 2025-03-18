@@ -45,15 +45,16 @@ jobs:
           port: 22
           script: |
             echo "Stopping existing application..."
-            pkill -f 'boardparadice-0.0.3-SNAPSHOT.jar' || echo "No process found"
+            sudo systemctl stop deploy_app || echo "No process found"
 
             echo "Starting new application..."
-            nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > /home/ubuntu/app.log 2>&1 &
-            echo $! > /home/ubuntu/app.pid  # ✅ PID 저장
+            sudo systemctl daemon-reload
+            sudo systemctl restart deploy_app  # ✅ systemd를 사용하여 실행
+            sleep 5  # ✅ 애플리케이션이 시작될 시간을 줌
 
-            sleep 10  # ✅ 충분한 시간 대기
             echo "Checking running processes..."
-            ps -ef | grep 'boardparadice' | grep -v grep  # ✅ 실행 확인
+            sudo systemctl status deploy_app  # ✅ 실행 상태 확인
 
             echo "Checking logs..."
             tail -n 50 /home/ubuntu/app.log || echo "Log file not found"
+      
