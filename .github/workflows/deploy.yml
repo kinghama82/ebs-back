@@ -36,6 +36,7 @@ jobs:
           source: "build/libs/boardparadice-0.0.4-SNAPSHOT.jar"
           target: "/home/ubuntu/"
           strip_components: 2
+          overwrite: true
 
       - name: Restart Application on EC2
         uses: appleboy/ssh-action@v1.2.2
