@@ -45,3 +45,4 @@ jobs:
           script: |
             pkill -f 'boardparadice-0.0.3-SNAPSHOT.jar'
             nohup java -jar /home/ubuntu/boardparadice-0.0.3-SNAPSHOT.jar --server.port=8080 > ~/app/logs.out 2>&1 &
+
