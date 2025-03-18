@@ -50,11 +50,13 @@ jobs:
             pkill -f boardparadice-0.0.4-SNAPSHOT.jar || echo "No process found"
 
             echo "Starting new application..."
-            nohup java -jar /home/ubuntu/boardparadice-0.0.4-SNAPSHOT.jar > /home/ubuntu/app.log 2>&1 &
+            nohup java -jar /home/ubuntu/boardparadice-0.0.4-SNAPSHOT.jar > /home/ubuntu/app.log 2>&1 < /dev/null &
+            disown
             sleep 5
 
             echo "Checking running processes..."
             pgrep -fl boardparadice-0.0.4-SNAPSHOT.jar
 
             echo "Checking logs..."
-            tail -n 50 /home/ubuntu/app.log || echo "Log file not found"            
+            tail -n 50 /home/ubuntu/app.log || echo "Log file not found"
+                  
