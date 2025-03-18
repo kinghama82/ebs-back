@@ -34,7 +34,8 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           source: "build/libs/boardparadice-0.0.4-SNAPSHOT.jar"
-          target: "/home/ubuntu/boardparadice-0.0.4-SNAPSHOT.jar"
+          target: "/home/ubuntu/"
+          strip_components: 2
 
       - name: Restart Application on EC2
         uses: appleboy/ssh-action@v1.2.2
