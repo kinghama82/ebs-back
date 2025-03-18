@@ -24,11 +24,11 @@ public class AnswerController {
 	
 	//저장
 	@PostMapping("/")
-	public ResponseEntity<AnswerDTO> create(
+	public ResponseEntity<Map<String, String>> create(
 			@PathVariable(name = "boardType")String boardType,
 			@RequestBody AnswerDTO answerDTO){
 		AnswerDTO dto = answerService.saveAnswer(boardType, answerDTO);
-		return ResponseEntity.ok(dto);		
+		return ResponseEntity.ok(Map.of("result", "등록 성공"));		
 	}
 	//삭제
 	@DeleteMapping("/{id}")
