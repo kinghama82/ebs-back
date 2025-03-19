@@ -25,7 +25,10 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // 인증이 필요 없는 경로(예: 회원가입, 로그인, public API 등)는 필터 제외
         String path = request.getRequestURI();
-        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/member") || path.startsWith("/api/products/view")) {
+        if(request.getMethod().equals("OPTIONS") || path.startsWith("/api/member")
+                || path.startsWith("/api/products/view")
+                || path.startsWith("/api/games")
+        ) {
             return true;
         }
         return false;
