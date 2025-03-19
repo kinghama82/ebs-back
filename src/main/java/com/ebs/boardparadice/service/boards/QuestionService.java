@@ -74,6 +74,7 @@ public class QuestionService {
 							.createdate(question.getCreatedate())
 							.view(question.getView())
 							.voter(question.getVoter())
+							.category(question.getCategory())
 							.build();
 
 			if (questionImage != null) {
@@ -115,6 +116,7 @@ public class QuestionService {
 
 		question.setContent(questionDTO.getContent());
 		question.setTitle(questionDTO.getTitle());
+		question.setCategory(questionDTO.getCategory());
 
 		question.clearList();
 		List<String> uploadFileNames = questionDTO.getUploadFileNames();
@@ -205,6 +207,7 @@ public class QuestionService {
 					.content(questionDTO.getContent())
 					.createdate(LocalDateTime.now())
 					.voter(questionDTO.getVoter())
+					.category(questionDTO.getCategory())
 					.build();
 
 		// ✅ 이미지 리스트 저장 (이전에는 `imageList`가 저장되지 않았음)
@@ -223,6 +226,7 @@ public class QuestionService {
 				.gamer(question.getGamer())
 				.content(question.getContent()).createdate(question.getCreatedate())
 				.view(question.getView())
+				.category(question.getCategory())
 				.answerList(question.getAnswerList() != null ? question.getAnswerList().stream()
 						.map(answer -> AnswerDTO.builder()
 								.id(answer.getId())
@@ -230,7 +234,7 @@ public class QuestionService {
 								.gamer(answer.getGamer())
 								.createdate(answer.getCreatedate())
 								.voter(answer.getVoter())
-								.question(answer.getQuestion().getId()) // ✅ 자유게시판이므로 `free` 필드 사용
+								.question(answer.getQuestion().getId()) 
 								.build())
 						.collect(Collectors.toList()) : new ArrayList<>()) // ✅ `answerList`가 없으면 빈 리스트 반환
 				.voter(question.getVoter()).build();

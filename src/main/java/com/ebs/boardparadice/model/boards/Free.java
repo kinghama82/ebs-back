@@ -67,6 +67,8 @@ public class Free {
     @Builder.Default
     private List<FreeAnswer> answerList = new ArrayList<>();
     
+    private String category;
+    
     @Builder.Default
     private BoardType typeId = BoardType.FREE;
     

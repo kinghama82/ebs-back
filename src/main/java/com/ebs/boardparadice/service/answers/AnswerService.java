@@ -104,6 +104,30 @@ public class AnswerService {
                 throw new IllegalArgumentException("잘못된 게시판 타입");
         }
     }
+    //조회
+    @Transactional
+    public AnswerDTO getAnswer(int id, String boardType) {
+        switch (boardType) {
+            case "free":
+                return freeAnswerRepository.findById(id)
+                        .map(answer -> entityToDto(answer, boardType))
+                        .orElseThrow(() -> new IllegalArgumentException("해당 ID의 자유게시판 댓글을 찾을 수 없습니다."));
+            case "news":
+                return newsAnswerRepository.findById(id)
+                        .map(answer -> entityToDto(answer, boardType))
+                        .orElseThrow(() -> new IllegalArgumentException("해당 ID의 뉴스 댓글을 찾을 수 없습니다."));
+            case "question":
+                return questionAnswerRepository.findById(id)
+                        .map(answer -> entityToDto(answer, boardType))
+                        .orElseThrow(() -> new IllegalArgumentException("해당 ID의 질문 게시판 댓글을 찾을 수 없습니다."));
+//            case "rulebook":
+//                return rulebookAnswerRepository.findById(id)
+//                        .map(answer -> entityToDto(answer, boardType))
+//                        .orElseThrow(() -> new IllegalArgumentException("해당 ID의 룰북 댓글을 찾을 수 없습니다."));
+            default:
+                throw new IllegalArgumentException("잘못된 게시판 타입: " + boardType);
+        }
+    }
 
     //삭제
     @Transactional
