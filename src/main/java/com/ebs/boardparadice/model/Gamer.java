@@ -38,7 +38,7 @@ public class Gamer {
     @Column(nullable = false, unique = true, length = 20)
     private String nickname;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column( unique = true, length = 20)
     private String phone;
 
     @Column(length = 100)
