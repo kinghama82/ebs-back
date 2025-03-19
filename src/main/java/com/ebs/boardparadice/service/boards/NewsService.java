@@ -75,6 +75,7 @@ public class NewsService {
 		                .createdate(news.getCreatedate())
 		                .view(news.getView())
 		                .voter(news.getVoter())
+		                .category(news.getCategory())
 		                .build();
 
 		        if (newsImage != null) {
@@ -119,7 +120,7 @@ public class NewsService {
 
 		   news.setContent(newsDTO.getContent());
 		   news.setTitle(newsDTO.getTitle());
-
+		   news.setCategory(newsDTO.getCategory());
 
 		   news.clearList();
 		   List<String> uploadFileNames = newsDTO.getUploadFileNames();
@@ -213,6 +214,7 @@ public class NewsService {
 				   .content(newsDTO.getContent())
 				   .createdate(LocalDateTime.now())
 				   .voter(newsDTO.getVoter())
+				   .category(newsDTO.getCategory())
 				   .build();
 
 		// ✅ 이미지 리스트 저장 (이전에는 `imageList`가 저장되지 않았음)
@@ -230,6 +232,7 @@ public class NewsService {
 				   .content(news.getContent())
 				   .createdate(news.getCreatedate())
 				   .view(news.getView())
+				   .category(news.getCategory())
 				   .answerList(
 						   news.getAnswerList() != null ?
 						   news.getAnswerList().stream()

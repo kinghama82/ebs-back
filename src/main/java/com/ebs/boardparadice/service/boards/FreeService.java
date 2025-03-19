@@ -75,6 +75,7 @@ public class FreeService {
 	                .createdate(free.getCreatedate())
 	                .view(free.getView())
 	                .voter(free.getVoter())
+	                .category(free.getCategory())
 	                .build();
 
 	        if (freeImage != null) {
@@ -119,6 +120,7 @@ public class FreeService {
 	   
 	   free.setContent(freeDTO.getContent());
 	   free.setTitle(freeDTO.getTitle());
+	   free.setCategory(freeDTO.getCategory());
 	   
 	   
 	   free.clearList();
@@ -213,6 +215,7 @@ public class FreeService {
 			   .content(freeDTO.getContent())
 			   .createdate(LocalDateTime.now())
 			   .voter(freeDTO.getVoter())
+			   .category(freeDTO.getCategory())
 			   .build();
 	   
 	// ✅ 이미지 리스트 저장 (이전에는 `imageList`가 저장되지 않았음)
@@ -230,6 +233,7 @@ public class FreeService {
 			   .content(free.getContent())
 			   .createdate(free.getCreatedate())
 			   .view(free.getView())
+			   .category(free.getCategory())
 			   .answerList(
 					   free.getAnswerList() != null ?
 					   free.getAnswerList().stream()

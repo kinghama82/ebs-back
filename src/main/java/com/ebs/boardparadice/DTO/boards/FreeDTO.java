@@ -24,6 +24,7 @@ public class FreeDTO {
 	
 	private int id;
 	private String title;
+	private String category;
 	
 	private String content;
 	private Gamer gamer;
