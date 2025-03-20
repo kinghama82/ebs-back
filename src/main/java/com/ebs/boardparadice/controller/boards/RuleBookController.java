@@ -2,6 +2,7 @@ package com.ebs.boardparadice.controller.boards;
 
 import com.ebs.boardparadice.DTO.PageRequestDTO;
 import com.ebs.boardparadice.DTO.PageResponseDTO;
+import com.ebs.boardparadice.DTO.boards.FreeDTO;
 import com.ebs.boardparadice.DTO.boards.RulebookDTO;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.Rulebook;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.digester.Rule;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -79,23 +81,21 @@ public class RuleBookController {
     }
 
 
-    @PutMapping("/modify/{id}")
-    public Map<String, String> modify(
-            @PathVariable(name = "id") Integer id,
-            @RequestPart("rulebook") String rulebookJson) throws IOException {
-
-        // JSON을 RulebookDTO로 변환
-        ObjectMapper objectMapper = new ObjectMapper();
-        RulebookDTO rulebookDTO = objectMapper.readValue(rulebookJson, RulebookDTO.class);
-
-        // ID 설정
+    /*@PutMapping("/modify/{id}")
+    public ResponseEntity<Map<String, String>> modify(@PathVariable(name = "id") int id, @RequestBody RulebookDTO rulebookDTO) {
         rulebookDTO.setId(id);
-
-        // 서비스 호출
         rulebookService.modifyRulebook(rulebookDTO);
+        return ResponseEntity.ok(Map.of("result", "성공"));
+    }*/
 
-        return Map.of("result", "성공");
+    @PutMapping("/modify/{id}")
+    public ResponseEntity<String> modify(@PathVariable(name = "id") int id, @RequestBody RulebookDTO rulebookDTO) {
+
+        rulebookDTO.setId(id);
+        rulebookService.modifyRulebook(rulebookDTO);
+        return ResponseEntity.ok("수정 성공");
     }
+
 
     @DeleteMapping("/delete/{id}")
     public Map<String, String> delete(@PathVariable(name = "id") Integer id) {
@@ -142,13 +142,6 @@ public class RuleBookController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    @GetMapping("/search")
-    public ResponseEntity<List<RulebookDTO>> searchRulebooks(@RequestParam String title) {
-        List<RulebookDTO> rulebooks = rulebookService.searchRulebooksByTitle(title);
-        return ResponseEntity.ok(rulebooks);
-    }
-
 
 
 

@@ -77,12 +77,17 @@ public class RulebookService {
 
     // 수정
     public void modifyRulebook(RulebookDTO rulebookDTO) {
-        Optional<Rulebook> result = rulebookRepository.findById(rulebookDTO.getId());
+        Rulebook rulebook = rulebookRepository.findById(rulebookDTO.getId())
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        Rulebook rulebook = result.orElseThrow();
+        if (rulebook.getWriter().getId() != rulebookDTO.getWriterId()) {
+            throw new RuntimeException("작성자만 수정할 수 있습니다.");
+        }
 
         rulebook.setTitle(rulebookDTO.getTitle());
         rulebook.setContent(rulebookDTO.getContent());
+        rulebook.setImageUrls(rulebookDTO.getImageUrls());
+        rulebook.setYoutubeLinks(rulebookDTO.getYoutubeLinks());
 
         rulebookRepository.save(rulebook);
     }
@@ -125,13 +130,6 @@ public class RulebookService {
         rulebook.getVoter().add(gamer);  // 추천한 유저를 voter 리스트에 추가
 
         rulebookRepository.save(rulebook);
-    }
-
-    // 제목으로 룰북 검색
-    public List<RulebookDTO> searchRulebooksByTitle(String title) {
-        return rulebookRepository.findByTitleContainingIgnoreCase(title).stream()
-                .map(rulebook -> modelMapper.map(rulebook, RulebookDTO.class))
-                .collect(Collectors.toList());
     }
 
 
