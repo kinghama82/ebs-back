@@ -1,17 +1,19 @@
 package com.ebs.boardparadice.security;
 
-import com.ebs.boardparadice.model.Gamer;
-import com.ebs.boardparadice.DTO.GamerDTO;
-import com.ebs.boardparadice.repository.GamerRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ebs.boardparadice.DTO.GamerDTO;
+import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.repository.GamerRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor

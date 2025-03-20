@@ -2,6 +2,8 @@ package com.ebs.boardparadice.config;
 
 import com.ebs.boardparadice.security.APILoginFailHandler;
 import com.ebs.boardparadice.security.APILoginSuccessHandler;
+import com.ebs.boardparadice.security.CustomOAuth2UserService;
+import com.ebs.boardparadice.security.OAuth2LoginSuccessHandler;
 import com.ebs.boardparadice.security.filter.JWTCheckFilter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +24,11 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-
 public class CustomSecurityConfig {
 
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -41,6 +45,12 @@ public class CustomSecurityConfig {
             form.successHandler(new com.ebs.boardparadice.security.APILoginSuccessHandler());
             form.failureHandler(new APILoginFailHandler());
         });
+        
+        //oauth2 로그인 설정
+        http.oauth2Login(oauth2 -> oauth2
+        		.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+        		.successHandler(oAuth2LoginSuccessHandler)
+        		);
 
         // JWTCheckFilter를 UsernamePasswordAuthenticationFilter 전에 실행
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
