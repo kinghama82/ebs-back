@@ -47,15 +47,8 @@ public class RulebookAnswerService {
         return answer.toDTO();
     }
 
-    @Transactional
-    public void deleteAnswer(int answerId, int userId) {
-        RulebookAnswer answer = answerRepository.findById(answerId)
-                .orElseThrow(() -> new IllegalArgumentException("Answer not found"));
 
-        if (answer.getGamer().getId() != userId) {
-            throw new IllegalStateException("You can only delete your own answers");
-        }
-
-        answerRepository.delete(answer);
+    public void deleteAnswer(Integer answerId) {
+        answerRepository.deleteById(answerId);
     }
-}
+    }

@@ -6,6 +6,8 @@ import com.ebs.boardparadice.DTO.answers.RulebookAnswerDTO;
 import com.ebs.boardparadice.model.answers.RulebookAnswer;
 import com.ebs.boardparadice.service.answers.RulebookAnswerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +32,8 @@ public class RulebookAnswerController {
     }
 
     @DeleteMapping("/{answerId}")
-    public void deleteAnswer(@PathVariable int rulebookId, @PathVariable int answerId, @RequestParam int userId) {
-        answerService.deleteAnswer(answerId, userId);
+    public ResponseEntity<String> deleteAnswer(@PathVariable Integer answerId) {
+        answerService.deleteAnswer(answerId);
+        return ResponseEntity.ok("✅ 답글이 삭제되었습니다.");
     }
 }

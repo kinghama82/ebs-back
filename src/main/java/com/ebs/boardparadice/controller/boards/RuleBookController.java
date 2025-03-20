@@ -43,7 +43,7 @@ public class RuleBookController {
     @PostMapping("/upload")
     public String uploadImage(MultipartFile file) throws IOException {
         // 업로드할 디렉토리 경로
-        String uploadDir = "src/main/resources/static/uploads/";
+        String uploadDir = "/home/ubuntu/uploads";
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();  // 디렉토리가 없으면 생성
@@ -57,24 +57,9 @@ public class RuleBookController {
         Files.write(filePath, file.getBytes());
 
         // 로컬 URL 반환
-        return "http://localhost:8080/uploads/" + fileName;  // 로컬 서버에서 접근할 수 있는 URL
+        return "http://43.202.30.85:8080/uploads/" + fileName;  // 로컬 서버에서 접근할 수 있는 URL
     }
 
-    public static class ImageUploadResponse {
-        private String url;
-
-        public ImageUploadResponse(String url) {
-            this.url = url;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-    }
 
     @GetMapping("/list")
     public PageResponseDTO<RulebookDTO> list(PageRequestDTO pageRequestDTO) {

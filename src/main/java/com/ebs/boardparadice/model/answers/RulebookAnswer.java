@@ -43,9 +43,6 @@ public class RulebookAnswer {
     @Column( updatable = false)
     private LocalDateTime createdDate;
 
-//    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-//    private LocalDateTime createdDate;
-
     @PrePersist
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
