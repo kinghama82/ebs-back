@@ -42,8 +42,8 @@ public class Rulebook {
     private LocalDateTime createdate;
 
     private BoardType type = BoardType.RULEBOOK;
-    
-    @OneToMany(mappedBy = "rulebook", cascade = CascadeType.REMOVE)
+
+    @OneToMany(mappedBy = "rulebook", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<RulebookAnswer> answerList = new ArrayList<>();
 
     
@@ -58,7 +58,6 @@ public class Rulebook {
     @ElementCollection
     @CollectionTable(name = "rulebook_youtube_links", joinColumns = @JoinColumn(name = "rulebook_id"))
     private List<String> youtubeLinks;
-
     
     @PrePersist
     public void prePersist() {

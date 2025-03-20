@@ -1,59 +1,36 @@
 package com.ebs.boardparadice.controller.answer;
 
+import com.ebs.boardparadice.DTO.answers.RuleAnswerRequest;
 import com.ebs.boardparadice.DTO.answers.RulebookAnswerDTO;
+
+import com.ebs.boardparadice.model.answers.RulebookAnswer;
 import com.ebs.boardparadice.service.answers.RulebookAnswerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/rulebook/{rulebookId}/answers")
+@RequiredArgsConstructor
 public class RulebookAnswerController {
-
     private final RulebookAnswerService answerService;
 
-    /**
-     * 특정 게시글의 답글 목록 조회
-     */
     @GetMapping
-    public ResponseEntity<List<RulebookAnswerDTO>> getAnswers(@PathVariable int rulebookId) {
-        List<RulebookAnswerDTO> answers = answerService.getAnswersByRulebookId(rulebookId);
-        return ResponseEntity.ok(answers);
+    public List<RulebookAnswerDTO> getAnswers(@PathVariable int rulebookId) {
+        return answerService.getAnswersByRulebookId(rulebookId);
     }
 
-    /**
-     * 답글 추가
-     */
     @PostMapping("/create")
-    public ResponseEntity<RulebookAnswerDTO> addAnswer(
-            @PathVariable int rulebookId,
-            @RequestBody Map<String, String> requestBody) {
+    public List<RulebookAnswerDTO> addAnswer(@PathVariable int rulebookId, @RequestBody RuleAnswerRequest request) {
+        answerService.addAnswer(rulebookId, request.getWriterId(), request.getContent());
+        List<RulebookAnswerDTO> answerDto = answerService.getAnswersByRulebookId(rulebookId);
 
-        int gamerId = Integer.parseInt(requestBody.get("gamerId"));
-        String content = requestBody.get("content");
-
-        RulebookAnswerDTO createdAnswer = answerService.addAnswer(rulebookId, gamerId, content);
-        return ResponseEntity.ok(createdAnswer);
+        return answerDto;
     }
 
-    /** 답글 수정 */
-    @PutMapping("/{answerId}")
-    public ResponseEntity<RulebookAnswerDTO> updateAnswer(
-            @PathVariable int answerId,
-            @RequestBody Map<String, String> requestBody) {
-
-        String content = requestBody.get("content");
-        return ResponseEntity.ok(answerService.updateAnswer(answerId, content));
-    }
-
-    /** 답글 삭제 */
     @DeleteMapping("/{answerId}")
-    public ResponseEntity<String> deleteAnswer(@PathVariable int answerId) {
-        answerService.deleteAnswer(answerId);
-        return ResponseEntity.ok("답글이 삭제되었습니다.");
+    public void deleteAnswer(@PathVariable int rulebookId, @PathVariable int answerId, @RequestParam int userId) {
+        answerService.deleteAnswer(answerId, userId);
     }
 }

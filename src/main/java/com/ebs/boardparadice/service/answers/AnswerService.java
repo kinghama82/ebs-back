@@ -13,7 +13,6 @@ import com.ebs.boardparadice.DTO.answers.AnswerDTO;
 import com.ebs.boardparadice.model.answers.FreeAnswer;
 import com.ebs.boardparadice.model.answers.NewsAnswer;
 import com.ebs.boardparadice.model.answers.QuestionAnswer;
-import com.ebs.boardparadice.model.answers.RulebookAnswer;
 import com.ebs.boardparadice.model.boards.Free;
 import com.ebs.boardparadice.model.boards.News;
 import com.ebs.boardparadice.model.boards.Question;
@@ -173,7 +172,7 @@ public class AnswerService {
                         .id(questionAnswer.getId())
                         .content(questionAnswer.getContent())
                         .gamer(questionAnswer.getGamer())
-                        .createdate(questionAnswer.getCreatedate())
+                        /*.createdate(questionAnswer.getCreatedate())*/
                         .voter(questionAnswer.getVoter())
                         .question(questionAnswer.getQuestion().getId())
                         .build();
@@ -195,7 +194,7 @@ public class AnswerService {
                         .id(newsAnswer.getId())
                         .content(newsAnswer.getContent())
                         .gamer(newsAnswer.getGamer())
-                        .createdate(newsAnswer.getCreatedate())
+                    /*    .createdate(newsAnswer.getCreatedate())*/
                         .voter(newsAnswer.getVoter())
                         .news(newsAnswer.getNews().getId())
                         .build();
@@ -215,7 +214,7 @@ public class AnswerService {
                                 .id(answer.getId())
                                 .content(answer.getContent())
                                 .gamer(answer.getGamer())
-                                .createdate(answer.getCreatedate())
+                              .createdate(answer.getCreatedate())
                                 .voter(answer.getVoter())
                                 .free(answer.getFree().getId())  // 자유게시판 ID 저장
                                 .build())
@@ -227,7 +226,7 @@ public class AnswerService {
                                 .id(answer.getId())
                                 .content(answer.getContent())
                                 .gamer(answer.getGamer())
-                                .createdate(answer.getCreatedate())
+                                /*.createdate(answer.getCreatedate())*/
                                 .voter(answer.getVoter())
                                 .question(answer.getQuestion().getId())  // 질문게시판 ID 저장
                                 .build())
@@ -251,7 +250,7 @@ public class AnswerService {
                                 .id(answer.getId())
                                 .content(answer.getContent())
                                 .gamer(answer.getGamer())
-                                .createdate(answer.getCreatedate())
+                               /* .createdate(answer.getCreatedate())*/
                                 .voter(answer.getVoter())
                                 .news(answer.getNews().getId())  // 뉴스게시판 ID 저장
                                 .build())

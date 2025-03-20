@@ -93,7 +93,7 @@ public class FreeService {
 	                    .id(0)  
 	                    .content("댓글 더미데이터")  
 	                    .gamer(null)  
-	                    .createdate(LocalDateTime.now())
+	                    /*.createdate(LocalDateTime.now())*/
 	                    .voter(null)
 	                    .free(free.getId())  
 	                    .build()
@@ -147,7 +147,7 @@ public class FreeService {
 	            		.id(answer.getId())
 	            		.content(answer.getContent())
 	                    .gamer(answer.getGamer())
-	                    .createdate(answer.getCreatedate())
+	                   /* .createdate(answer.getCreatedate())*/
 	                    .voter(answer.getVoter())
 	                    .free(answer.getFree().getId())
 	                    .build())

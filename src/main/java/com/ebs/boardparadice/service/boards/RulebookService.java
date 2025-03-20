@@ -57,19 +57,6 @@ public class RulebookService {
                 .build();
     }
 
-/*    // 작성 (이미지 업로드와 함께)
-    public Integer createRulebook(RulebookDTO rulebookDTO) {
-        Rulebook rulebook = modelMapper.map(rulebookDTO, Rulebook.class);
-
-        // 이미지 URL과 YouTube 링크를 직접 저장
-        rulebook.setImageUrls(rulebookDTO.getImageUrls());
-        rulebook.setYoutubeLinks(rulebookDTO.getYoutubeLinks());
-        rulebook.setWriter(rulebookDTO.getWriter());
-
-        Rulebook savedRulebook = rulebookRepository.save(rulebook);
-        return savedRulebook.getId();
-    }*/
-
     // 상세보기
     public RulebookDTO getRulebook(Integer id) {
         // 게시글 조회
@@ -78,12 +65,12 @@ public class RulebookService {
 
         //댓리스트를 dto에 추가
         RulebookDTO rulebookDTO = modelMapper.map(rulebook, RulebookDTO.class);
-        
+
         rulebookDTO.setAnswerList(
         		rulebook.getAnswerList().stream()
         		.map(answer -> modelMapper.map(answer, AnswerDTO.class))
         		.collect(Collectors.toList()));
-        
+
         // DTO로 변환하여 반환
         return rulebookDTO;
     }

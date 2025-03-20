@@ -1,26 +1,17 @@
 package com.ebs.boardparadice.model.answers;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
-import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.DTO.answers.RulebookAnswerDTO;
 import com.ebs.boardparadice.model.Gamer;
 import com.ebs.boardparadice.model.boards.Rulebook;
+import com.fasterxml.jackson.annotation.JsonIgnore; // JSON 변환 시 무한 참조 방지
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Getter
@@ -34,30 +25,41 @@ public class RulebookAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    
+
     @ManyToOne
     @JoinColumn(name = "gamer_id", nullable = false)
     private Gamer gamer;
-    
-    @ManyToMany
-    private Set<Gamer> voter;
-    
+
     @ManyToOne
     @JoinColumn(name = "rulebook_id", nullable = false)
+    @JsonIgnore // 무한 루프 방지
     private Rulebook rulebook;
 
-    @Column(name = "createdate", nullable = false, updatable = false)
-    private LocalDateTime createdate;
-    
-    @Builder.Default
-    private BoardType type = BoardType.ANSWERS;
+    @ManyToMany
+    private Set<Gamer> voters = new HashSet<>();
+
+    @Column( updatable = false)
+    private LocalDateTime createdDate;
+
+//    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+//    private LocalDateTime createdDate;
 
     @PrePersist
-    public void prePersist() {
-    	if(createdate == null) {
-    		createdate = LocalDateTime.now();
-    	}
+    protected void onCreate() {
+        this.createdDate = LocalDateTime.now();
+    }
+
+    public RulebookAnswerDTO toDTO() {
+        return RulebookAnswerDTO.builder()
+                .id(this.id)
+                .content(this.content)
+                .gamer(this.gamer.getId())
+                .writerNickname(this.gamer.getNickname())
+                .rulebookId(this.rulebook != null ? this.rulebook.getId() : 0) // Null 방지 처리
+                .createdDate(this.createdDate)
+                /*.voteCount(this.voters.size())*/
+                .build();
     }
 }
