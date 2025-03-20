@@ -26,6 +26,9 @@ public interface GameRepository extends JpaRepository<Game, Integer> {
             "OR LOWER(g.company) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(g.enGameName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Game> searchGames(@Param("keyword") String keyword);
+    
+    //최신발매게임10선
+    List<Game> findTop10ByOrderByIdDesc();
 
 }
 

@@ -115,6 +115,13 @@ public class GameService {
                 .orElseThrow(() -> new RuntimeException("Game not found with id: " + id));
         gameRepository.delete(game);
     }
+    
+    //최근등록게임 10개
+    @Transactional
+    public List<GameDTO> getNewestGames(){
+    	List<Game> games = gameRepository.findTop10ByOrderByIdDesc();
+    	return games.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
 
     /**
      * Game 엔티티를 GameResponseDTO로 변환

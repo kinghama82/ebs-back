@@ -96,7 +96,13 @@ public class GameController {
         // ✅ 프론트에서 접근할 수 있도록 "/uploads/games/파일명" 반환
         return "/uploads/games/" + fileName;
     }
-
+    
+    //최신등록게임10개
+    @GetMapping("/newest")
+    public ResponseEntity<List<GameDTO>> getNewest10(){
+    	List<GameDTO> games = gameService.getNewestGames();
+    	return new ResponseEntity<>(games, HttpStatus.OK);
+    }
 
 
     /*private String saveImageFile(MultipartFile imgFile) throws Exception {
