@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/games")
+@RequestMapping("/games")
 @RequiredArgsConstructor
 public class GameController {
 
@@ -138,18 +138,15 @@ public class GameController {
         return "/uploads/games/" + fileName;
     }*/
 
-    /**
-     * 전체 게임 목록 조회 (GET /games)
-     */
+
+     // 전체 게임 목록 조회
     @GetMapping
     public ResponseEntity<List<GameDTO>> getAllGames() {
         List<GameDTO> games = gameService.getAllGames();
         return new ResponseEntity<>(games, HttpStatus.OK);
     }
 
-    /**
-     * 특정 게임 조회 (GET /games/{id})
-     */
+     // 특정 게임 조회
     @GetMapping("/{id}")
     public ResponseEntity<GameDTO> getGameById(@PathVariable(name = "id") int id) {
         GameDTO game = gameService.getGameById(id);
@@ -174,9 +171,8 @@ public class GameController {
         gameService.deleteGame(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    /**
-     * 게임 검색 API (GET /api/games/search?keyword=검색어)
-     */
+
+    // 게임 검색 API (GET /api/games/search?keyword=검색어)
     @GetMapping("/search")
     public ResponseEntity<List<GameDTO>> searchGames(@RequestParam(name = "keyword") String keyword) {
         List<GameDTO> games = gameService.searchGames(keyword);
