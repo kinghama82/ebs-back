@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/games")
+@RequestMapping("/api/games")
 @RequiredArgsConstructor
 public class GameController {
 
