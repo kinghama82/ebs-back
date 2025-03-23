@@ -2,14 +2,21 @@ package com.ebs.boardparadice.model;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Gamer {
 
     @Id
@@ -31,14 +38,13 @@ public class Gamer {
     @Column(nullable = false, unique = true, length = 20)
     private String nickname;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column( unique = true, length = 20)
     private String phone;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String address;
 
-    @Column(nullable = false, length = 10)
-    private String role;
+    private boolean social;
 
     @Column(nullable = false)
     private LocalDateTime createdate;
@@ -46,8 +52,35 @@ public class Gamer {
     @Column(nullable = false, length = 20)
     private String level;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<GamerRole> gamerRoleList = new ArrayList<>();
+
+    public void addRole(GamerRole gamerRole) {
+        gamerRoleList.add(gamerRole);
+    }
+
+    public void clearRole(){
+        gamerRoleList.clear();
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+
+    public void changeSocial(boolean social) {
+        this.social = social;
+    }
+
     @PrePersist
     public void prePersist() {
         createdate = LocalDateTime.now();
     }
+
+    @Column
+    private String profileImage;
 }

@@ -22,6 +22,12 @@ bin/
 *.iws
 *.iml
 *.ipr
+# application.properties 파일을 Git에서 제외
+src/main/resources/application.properties
+
+# static/uploads 폴더 포함시키기
+!src/main/resources/static/uploads/
+!src/main/resources/static/uploads/**
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/

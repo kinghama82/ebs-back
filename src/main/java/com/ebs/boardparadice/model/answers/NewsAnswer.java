@@ -1,17 +1,33 @@
 package com.ebs.boardparadice.model.answers;
 
-import com.example.mergeex.model.Gamer;
-import com.example.mergeex.model.News;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
+
+import com.ebs.boardparadice.model.BoardType;
+import com.ebs.boardparadice.model.Gamer;
+import com.ebs.boardparadice.model.boards.News;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NewsAnswer {
 
     @Id
@@ -21,22 +37,29 @@ public class NewsAnswer {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "writer_id")
-    private Gamer writerId;
+    @ManyToOne
+    @JoinColumn(name = "gamer_id")
+    private Gamer gamer;
 
     @ManyToMany
     private Set<Gamer> voter;
 
     @ManyToOne
-    @JoinColumn(name = "news_id")
-    private News newsId;
+    @JoinColumn(name = "news_id", nullable = false)
+    private News news;
 
     @Column(name = "createdate", nullable = false, updatable = false)
-    private LocalDate createdate;
+    private LocalDateTime createdate;
+    
+    @Builder.Default
+    private BoardType type = BoardType.ANSWERS;
 
     @PrePersist
     public void prePersist() {
-        createdate = LocalDate.now();
+    	if(createdate == null) {
+    		createdate = LocalDateTime.now();
+    	}
+        
     }
+
 }
