@@ -51,6 +51,13 @@ public class CustomSecurityConfig {
         		.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
         		.successHandler(oAuth2LoginSuccessHandler)
         		);
+        
+        http.authorizeHttpRequests(auth -> auth
+        	    .requestMatchers("/oauth2/**").permitAll() // ✅ 소셜 로그인 경로 허용
+        	    .requestMatchers("/api/**").permitAll()     // ✅ 필요한 API 경로도 여기에 추가
+        	    .anyRequest().permitAll() // 혹은 authenticated()로 바꾸기
+        	);
+
 
         // JWTCheckFilter를 UsernamePasswordAuthenticationFilter 전에 실행
         http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);
