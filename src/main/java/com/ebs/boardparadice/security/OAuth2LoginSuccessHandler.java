@@ -75,7 +75,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = JWTUtil.generateToken(claims, 60 * 24);
 
         // ✅ JSON 응답 대신 바로 프론트엔드 `/auth/callback`으로 리디렉트
-        String redirectUrl = "http://localhost:3000/auth/callback?accessToken=" + accessToken + "&refreshToken=" + refreshToken;
+        String redirectUrl = "https://www.boardparadice.com/auth/callback?accessToken=" + accessToken + "&refreshToken=" + refreshToken;
         response.sendRedirect(redirectUrl);
     }
 }
