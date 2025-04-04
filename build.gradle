@@ -58,7 +58,8 @@ dependencies {
 	implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '6.4.3'
    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-resource-server
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.4.3'
-	implementation 'ch.qos.logback:logback-classic:1.4.11'
+	implementation 'ch.qos.logback:logback-classic:1.5.16'
+    implementation 'ch.qos.logback:logback-core:1.5.16'
    
 }
 
