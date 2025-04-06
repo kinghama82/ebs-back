@@ -37,8 +37,6 @@ public class CustomSecurityConfig {
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.csrf(csrf -> csrf.disable());
 
-
-
         // 로그인 엔드포인트 (예: /api/gamer/login)는 JWTCheckFilter 검증 제외 처리
         http.formLogin(form -> {
             form.loginPage("/api/gamer/login");
